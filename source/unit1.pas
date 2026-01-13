@@ -6,7 +6,7 @@ v5.xx
 A Microsoft(r) Windows(r) GUI for Greseaweazle Host Tools
 FREEWARE / OpenSource
 License: GNU General Public License v2.0
-(c) 2021-2025 FrankieTheFluff
+(c) 2021-2026 FrankieTheFluff
 Web: https://github.com/FrankieTheFluff/FluxMyFluffyFloppy
 Mail: fluxmyfluffyfloppy@mail.de
 -----------------------------------------------------------------
@@ -653,8 +653,8 @@ var
   gw :string;
 begin
   sAppName := 'FluxMyFluffyFloppy ';
-  sAppVersion := 'v5.2.6';
-  sAppDate := '2025-12-05';
+  sAppVersion := 'v5.2.7';
+  sAppDate := '2026-01-13';
   sAppVersion_ReadTmpl := 'v4.00';
   sAppVersion_WriteTmpl := 'v4.00';
   AboutGW := 'Requires "Greaseweazle v1.22+" (and optional "diskdefs_.cfg")';
@@ -830,6 +830,7 @@ begin
   FormatSpecs_Read.Add('apple2.appledos.140');
   FormatSpecs_Read.Add('apple2.nofs.140');
   FormatSpecs_Read.Add('apple2.prodos.140');
+  FormatSpecs_Read.Add('atari.130');
   FormatSpecs_Read.Add('atari.90');
   FormatSpecs_Read.Add('atarist.360');
   FormatSpecs_Read.Add('atarist.400');
@@ -849,12 +850,15 @@ begin
   FormatSpecs_Read.Add('commodore.fd2000.dd');
   FormatSpecs_Read.Add('commodore.fd2000.hd');
   FormatSpecs_Read.Add('commodore.fd4000.ed');
+  FormatSpecs_Read.Add('datageneral.2f');
   FormatSpecs_Read.Add('dec.rx01');
   FormatSpecs_Read.Add('dec.rx02');
   FormatSpecs_Read.Add('dragon.40ds');
   FormatSpecs_Read.Add('dragon.40ss');
   FormatSpecs_Read.Add('dragon.80ds');
   FormatSpecs_Read.Add('dragon.80ss');
+  FormatSpecs_Read.Add('eagle.dsqd.800');
+  FormatSpecs_Read.Add('eagle.ssqd.400');
   FormatSpecs_Read.Add('ensoniq.1600');
   FormatSpecs_Read.Add('ensoniq.800');
   FormatSpecs_Read.Add('ensoniq.mirage');
@@ -879,6 +883,16 @@ begin
   FormatSpecs_Read.Add('ibm.800');
   FormatSpecs_Read.Add('ibm.dmf');
   FormatSpecs_Read.Add('ibm.scan');
+  FormatSpecs_Read.Add('kaypro.dsdd.40');
+  FormatSpecs_Read.Add('kaypro.dsdd.80');
+  FormatSpecs_Read.Add('kaypro.ssdd.40');
+  FormatSpecs_Read.Add('luxor.1000.abcnet');
+  FormatSpecs_Read.Add('luxor.1000.data');
+  FormatSpecs_Read.Add('luxor.1000.program');
+  FormatSpecs_Read.Add('luxor.160');
+  FormatSpecs_Read.Add('luxor.320');
+  FormatSpecs_Read.Add('luxor.640');
+  FormatSpecs_Read.Add('luxor.80');
   FormatSpecs_Read.Add('mac.400');
   FormatSpecs_Read.Add('mac.800');
   FormatSpecs_Read.Add('micropolis.100tpi.ds');
@@ -921,8 +935,27 @@ begin
   FormatSpecs_Read.Add('thomson.2s320');
   FormatSpecs_Read.Add('tsc.flex.dsdd');
   FormatSpecs_Read.Add('tsc.flex.ssdd');
-  FormatSpecs_Read.Add('zx.quorum.800');
-  FormatSpecs_Read.Add('zx.trdos.640');
+  FormatSpecs_Read.Add('xerox.860.dssd');
+  FormatSpecs_Read.Add('xerox.860.ss');
+  FormatSpecs_Read.Add('zx.3dos.ds80');
+  FormatSpecs_Read.Add('zx.3dos.ss40');
+  FormatSpecs_Read.Add('zx.d80.ds80');
+  FormatSpecs_Read.Add('zx.fdd3000.ds80');
+  FormatSpecs_Read.Add('zx.fdd3000.ss40');
+  FormatSpecs_Read.Add('zx.kempston.ds80');
+  FormatSpecs_Read.Add('zx.kempston.ss40');
+  FormatSpecs_Read.Add('zx.opus.ds80');
+  FormatSpecs_Read.Add('zx.opus.ss40');
+  FormatSpecs_Read.Add('zx.plusd.ds80');
+  FormatSpecs_Read.Add('zx.quorum.ds80');
+  FormatSpecs_Read.Add('zx.rocky.ds80');
+  FormatSpecs_Read.Add('zx.rocky.ss40');
+  FormatSpecs_Read.Add('zx.trdos.ds80');
+  FormatSpecs_Read.Add('zx.turbodrive.ds40');
+  FormatSpecs_Read.Add('zx.turbodrive.ds80');
+  FormatSpecs_Read.Add('zx.watford.ds80');
+  FormatSpecs_Read.Add('zx.watford.ss40');
+
 
   // Create Stringlist Write Diskdefs
   FormatSpecs_Write := TStringList.Create;
@@ -943,6 +976,7 @@ begin
   FormatSpecs_Write.Add('apple2.appledos.140');
   FormatSpecs_Write.Add('apple2.nofs.140');
   FormatSpecs_Write.Add('apple2.prodos.140');
+  FormatSpecs_Write.Add('atari.130');
   FormatSpecs_Write.Add('atari.90');
   FormatSpecs_Write.Add('atarist.360');
   FormatSpecs_Write.Add('atarist.400');
@@ -962,12 +996,15 @@ begin
   FormatSpecs_Write.Add('commodore.fd2000.dd');
   FormatSpecs_Write.Add('commodore.fd2000.hd');
   FormatSpecs_Write.Add('commodore.fd4000.ed');
+  FormatSpecs_Write.Add('datageneral.2f');
   FormatSpecs_Write.Add('dec.rx01');
   FormatSpecs_Write.Add('dec.rx02');
   FormatSpecs_Write.Add('dragon.40ds');
   FormatSpecs_Write.Add('dragon.40ss');
   FormatSpecs_Write.Add('dragon.80ds');
   FormatSpecs_Write.Add('dragon.80ss');
+  FormatSpecs_Write.Add('eagle.dsqd.800');
+  FormatSpecs_Write.Add('eagle.ssqd.400');
   FormatSpecs_Write.Add('ensoniq.1600');
   FormatSpecs_Write.Add('ensoniq.800');
   FormatSpecs_Write.Add('ensoniq.mirage');
@@ -992,6 +1029,16 @@ begin
   FormatSpecs_Write.Add('ibm.800');
   FormatSpecs_Write.Add('ibm.dmf');
   FormatSpecs_Write.Add('ibm.scan');
+  FormatSpecs_Write.Add('kaypro.dsdd.40');
+  FormatSpecs_Write.Add('kaypro.dsdd.80');
+  FormatSpecs_Write.Add('kaypro.ssdd.40');
+  FormatSpecs_Write.Add('luxor.1000.abcnet');
+  FormatSpecs_Write.Add('luxor.1000.data');
+  FormatSpecs_Write.Add('luxor.1000.program');
+  FormatSpecs_Write.Add('luxor.160');
+  FormatSpecs_Write.Add('luxor.320');
+  FormatSpecs_Write.Add('luxor.640');
+  FormatSpecs_Write.Add('luxor.80');
   FormatSpecs_Write.Add('mac.400');
   FormatSpecs_Write.Add('mac.800');
   FormatSpecs_Write.Add('micropolis.100tpi.ds');
@@ -1034,8 +1081,26 @@ begin
   FormatSpecs_Write.Add('thomson.2s320');
   FormatSpecs_Write.Add('tsc.flex.dsdd');
   FormatSpecs_Write.Add('tsc.flex.ssdd');
-  FormatSpecs_Write.Add('zx.quorum.800');
-  FormatSpecs_Write.Add('zx.trdos.640');
+  FormatSpecs_Write.Add('xerox.860.dssd');
+  FormatSpecs_Write.Add('xerox.860.ss');
+  FormatSpecs_Write.Add('zx.3dos.ds80');
+  FormatSpecs_Write.Add('zx.3dos.ss40');
+  FormatSpecs_Write.Add('zx.d80.ds80');
+  FormatSpecs_Write.Add('zx.fdd3000.ds80');
+  FormatSpecs_Write.Add('zx.fdd3000.ss40');
+  FormatSpecs_Write.Add('zx.kempston.ds80');
+  FormatSpecs_Write.Add('zx.kempston.ss40');
+  FormatSpecs_Write.Add('zx.opus.ds80');
+  FormatSpecs_Write.Add('zx.opus.ss40');
+  FormatSpecs_Write.Add('zx.plusd.ds80');
+  FormatSpecs_Write.Add('zx.quorum.ds80');
+  FormatSpecs_Write.Add('zx.rocky.ds80');
+  FormatSpecs_Write.Add('zx.rocky.ss40');
+  FormatSpecs_Write.Add('zx.trdos.ds80');
+  FormatSpecs_Write.Add('zx.turbodrive.ds40');
+  FormatSpecs_Write.Add('zx.turbodrive.ds80');
+  FormatSpecs_Write.Add('zx.watford.ds80');
+  FormatSpecs_Write.Add('zx.watford.ss40');
 
   // Create StringList Convert  Diskdefs
   FormatSpecs_Conv := TStringList.Create;
@@ -1056,6 +1121,7 @@ begin
   FormatSpecs_Conv.Add('apple2.appledos.140');
   FormatSpecs_Conv.Add('apple2.nofs.140');
   FormatSpecs_Conv.Add('apple2.prodos.140');
+  FormatSpecs_Conv.Add('atari.130');
   FormatSpecs_Conv.Add('atari.90');
   FormatSpecs_Conv.Add('atarist.360');
   FormatSpecs_Conv.Add('atarist.400');
@@ -1075,12 +1141,15 @@ begin
   FormatSpecs_Conv.Add('commodore.fd2000.dd');
   FormatSpecs_Conv.Add('commodore.fd2000.hd');
   FormatSpecs_Conv.Add('commodore.fd4000.ed');
+  FormatSpecs_Conv.Add('datageneral.2f');
   FormatSpecs_Conv.Add('dec.rx01');
   FormatSpecs_Conv.Add('dec.rx02');
   FormatSpecs_Conv.Add('dragon.40ds');
   FormatSpecs_Conv.Add('dragon.40ss');
   FormatSpecs_Conv.Add('dragon.80ds');
   FormatSpecs_Conv.Add('dragon.80ss');
+  FormatSpecs_Conv.Add('eagle.dsqd.800');
+  FormatSpecs_Conv.Add('eagle.ssqd.400');
   FormatSpecs_Conv.Add('ensoniq.1600');
   FormatSpecs_Conv.Add('ensoniq.800');
   FormatSpecs_Conv.Add('ensoniq.mirage');
@@ -1105,6 +1174,16 @@ begin
   FormatSpecs_Conv.Add('ibm.800');
   FormatSpecs_Conv.Add('ibm.dmf');
   FormatSpecs_Conv.Add('ibm.scan');
+  FormatSpecs_Conv.Add('kaypro.dsdd.40');
+  FormatSpecs_Conv.Add('kaypro.dsdd.80');
+  FormatSpecs_Conv.Add('kaypro.ssdd.40');
+  FormatSpecs_Conv.Add('luxor.1000.abcnet');
+  FormatSpecs_Conv.Add('luxor.1000.data');
+  FormatSpecs_Conv.Add('luxor.1000.program');
+  FormatSpecs_Conv.Add('luxor.160');
+  FormatSpecs_Conv.Add('luxor.320');
+  FormatSpecs_Conv.Add('luxor.640');
+  FormatSpecs_Conv.Add('luxor.80');
   FormatSpecs_Conv.Add('mac.400');
   FormatSpecs_Conv.Add('mac.800');
   FormatSpecs_Conv.Add('micropolis.100tpi.ds');
@@ -1147,8 +1226,26 @@ begin
   FormatSpecs_Conv.Add('thomson.2s320');
   FormatSpecs_Conv.Add('tsc.flex.dsdd');
   FormatSpecs_Conv.Add('tsc.flex.ssdd');
-  FormatSpecs_Conv.Add('zx.quorum.800');
-  FormatSpecs_Conv.Add('zx.trdos.640');
+  FormatSpecs_Conv.Add('xerox.860.dssd');
+  FormatSpecs_Conv.Add('xerox.860.ss');
+  FormatSpecs_Conv.Add('zx.3dos.ds80');
+  FormatSpecs_Conv.Add('zx.3dos.ss40');
+  FormatSpecs_Conv.Add('zx.d80.ds80');
+  FormatSpecs_Conv.Add('zx.fdd3000.ds80');
+  FormatSpecs_Conv.Add('zx.fdd3000.ss40');
+  FormatSpecs_Conv.Add('zx.kempston.ds80');
+  FormatSpecs_Conv.Add('zx.kempston.ss40');
+  FormatSpecs_Conv.Add('zx.opus.ds80');
+  FormatSpecs_Conv.Add('zx.opus.ss40');
+  FormatSpecs_Conv.Add('zx.plusd.ds80');
+  FormatSpecs_Conv.Add('zx.quorum.ds80');
+  FormatSpecs_Conv.Add('zx.rocky.ds80');
+  FormatSpecs_Conv.Add('zx.rocky.ss40');
+  FormatSpecs_Conv.Add('zx.trdos.ds80');
+  FormatSpecs_Conv.Add('zx.turbodrive.ds40');
+  FormatSpecs_Conv.Add('zx.turbodrive.ds80');
+  FormatSpecs_Conv.Add('zx.watford.ds80');
+  FormatSpecs_Conv.Add('zx.watford.ss40');
 
   cbReadTplFormat.items.Text := FormatSpecs_Read.Text;
   cbReadFormat.Items.Text := FormatDest_Ext.Text;        // bspw. .msa
@@ -4172,6 +4269,10 @@ begin
     begin
       if cbWriteTplCyls.Text <> '' then
        begin
+        cbWriteTplHeads.Enabled := true;
+        cbWriteTplSteps.Enabled := true;
+        cbWriteTplHSwap.Enabled := true;
+        cbWriteTplFlippy.Enabled := true;
         cmd := cmd + Trackset(' --tracks=',cbWriteTplCyls.Text,cbWriteTplHeads.Text,cbWriteTplSteps.Text,cbWriteTplHSwap.Checked,cbWriteTplFlippy.Text);
         if cbWriteTplFlippy.Text <> '' then
          begin
@@ -4180,6 +4281,14 @@ begin
          end
         else
          cbWriteTplFlippyReverse.Enabled := false;
+       end;
+      if cbWriteTplCyls.Text = '' then                       //Trackset
+       begin
+        cbWriteTplHeads.Enabled := false;
+        cbWriteTplSteps.Enabled := false;
+        cbWriteTplHSwap.Enabled := false;
+        cbWriteTplFlippy.Enabled := false;
+        cbWriteTplFlippyReverse.Enabled := false;
        end;
       if cbWriteTplPreErase.Checked = true then
        begin

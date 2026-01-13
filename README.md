@@ -1,6 +1,6 @@
 -----------------------------------------------------------------
 
-FluxMyFluffyFloppy v5.2.6 - 2025-12-05
+FluxMyFluffyFloppy v5.2.7 - 2026-01-13
 -
 
 A Microsoft(r) Windows(r) GUI for the "Greaseweazle Host Tools"
@@ -9,7 +9,7 @@ FREEWARE / OpenSource
 
 License: GNU General Public License v2.0
 
-(c) 2021-2025 FrankieTheFluff
+(c) 2021-2026 FrankieTheFluff
 
 Web: https://github.com/FrankieTheFluff/FluxMyFluffyFloppy
 
