@@ -1,19 +1,19 @@
 {
------------------------------------------------------------------
+-------------------------------------------------------------------
 FluxMyFluffyFloppy
 v5.xx
------------------------------------------------------------------
-A Microsoft(r) Windows(r) GUI for Greseaweazle Host Tools
+-------------------------------------------------------------------
+A Microsoft(r) Windows(r) and Linux GUI for Greseaweazle Host Tools
 FREEWARE / OpenSource
 License: GNU General Public License v2.0
 (c) 2021-2026 FrankieTheFluff
 Web: https://github.com/FrankieTheFluff/FluxMyFluffyFloppy
 Mail: fluxmyfluffyfloppy@mail.de
------------------------------------------------------------------
+-------------------------------------------------------------------
 Uses code from the following projects:
 UnTerminal 1.0 by Tito Hinostroza 02/10/2020
 https://github.com/t-edson/UnTerminal
------------------------------------------------------------------
+-------------------------------------------------------------------
 }
 unit Unit1;
 
@@ -24,7 +24,45 @@ interface
 uses
   Classes, SysUtils, SQLite3Conn, SQLDB, DB, Forms, Controls, Graphics, Dialogs,
   ComCtrls, DBGrids, StdCtrls, DBCtrls, Menus, EditBtn, Spin, ExtCtrls,
-  IniFiles, Process, Registry, Fileutil, LazFileUtils, LCLIntf;
+  IniFiles, Process, FileUtil, LazFileUtils
+{$IFDEF WINDOWS}
+  , Registry, LCLIntf
+{$ENDIF};
+
+
+const
+  FLUX_INI_NAME = 'FluxMyFluffyFloppy';
+  GW_INI_FILE = 'FluxMyFluffyFloppy.ini';
+  GW_APP_NAME = 'Greaseweazle';
+  GW_DISKDEF_FOLDER = 'Diskdefs';
+  GW_TEMPLATE_FOLDER = 'Template';
+  GW_APP_FILE = 'Greaseweazle';
+  GW_DOCUMENTS_FOLDER = 'Documents';
+
+
+  GW_INI_WRITE_EXT = '.iniw';
+  GW_INI_READ_EXT = '.inir';
+  GW_CONFIG_EXT = '.cfg';
+  GW_PROP_PAGE_READ = 0;
+  GW_PROP_PAGE_WRITE = 1;
+  GW_PROP_PAGE_CONVERT = 2;
+  GW_PROP_PAGE_TOOLS = 3;
+  GW_PROP_PAGE_SETTINGS = 4;
+
+  APP_NAME = 'FluxMyFluffyFloppy ';
+  APP_VERSION = 'v5.2.7';
+  APP_DATE = '2026-01-13';
+
+  {$IFDEF WINDOWS}
+    GW_EXECUTABLE = 'greaseweazle\gw.exe';
+    GW_APP = 'gw.exe';
+    PATH_SPECIFIER: char ='\';
+  {$ELSE}
+    GW_EXECUTABLE = 'gw';  // or full path, see note below
+    GW_APP = 'gw';
+    PATH_SPECIFIER: char ='/';
+  {$ENDIF}
+
 type
 
   { TForm1 }
@@ -34,8 +72,9 @@ type
     btConvExplorer: TButton;
     btGo: TButton;
     btGWBandwidth: TButton;
-    btGWInfo: TButton;
     btGWCMDDir: TButton;
+    btGWInfo: TButton;
+    btGWRefreshUSB: TButton;
     btGWReset: TButton;
     btReadDestExplore: TButton;
     btReadDiskReset: TButton;
@@ -47,7 +86,6 @@ type
     BtWriteTplDel: TButton;
     BtWriteTplNew: TButton;
     BtWriteTplSave: TButton;
-    btGWRefreshUSB: TButton;
     cbConvAdjustSpeed: TComboBox;
     cbConvDigits: TSpinEdit;
     cbConvDisk1: TSpinEdit;
@@ -74,6 +112,8 @@ type
     cbConvTracksetHeads: TComboBox;
     cbConvTracksetHSwap: TCheckBox;
     cbConvTracksetSteps: TComboBox;
+    cbGWDevCOM: TComboBox;
+    cbGWDrive: TComboBox;
     cbGWHW: TComboBox;
     cbReadFormat: TComboBox;
     cbReadFormatOption: TComboBox;
@@ -97,8 +137,6 @@ type
     cbReadTplLogBoth: TCheckBox;
     cbReadTplLogOutput: TCheckBox;
     cbReadTplLogParam: TCheckBox;
-    cbGWDevCOM: TComboBox;
-    cbGWDrive: TComboBox;
     cbReadTplName: TComboBox;
     cbReadTplPLL: TComboBox;
     cbReadTplRaw: TCheckBox;
@@ -153,7 +191,6 @@ type
     cbWriteTplRetries: TComboBox;
     cbWriteTplSteps: TComboBox;
     cbWriteTplTplTP43Pin2: TCheckBox;
-    DataSource1: TDataSource;
     edConvDirDest: TDirectoryEdit;
     edConvDiskOf: TEdit;
     edConvFilename: TEdit;
@@ -218,9 +255,9 @@ type
     lblConvTracksetHeads: TLabel;
     lblConvTracksetHSwap: TLabel;
     lblConvTracksetSteps: TLabel;
-    lblGWDrive: TLabel;
-    lblGWDevice: TLabel;
     lblGW: TLabel;
+    lblGWDevice: TLabel;
+    lblGWDrive: TLabel;
     lblGWHW: TLabel;
     lblReadDestDigits: TLabel;
     lblReadDestDir: TLabel;
@@ -327,24 +364,19 @@ type
     pnWriteSourceFile: TPanel;
     pnWriteTpl: TPanel;
     rbGetPIN: TRadioButton;
-    rbSetDelays: TRadioButton;
-    rbSetFirmware: TRadioButton;
-    rbSetGetPIN: TRadioButton;
+    rbSetDelays: TCheckBox;
+    rbSetFirmware: TCheckBox;
+    rbSetGetPIN: TCheckBox;
     rbSetPIN: TRadioButton;
-    rbToolsClean: TRadioButton;
-    rbToolsErase: TRadioButton;
-    rbToolsRPM: TRadioButton;
-    rbToolsSeek: TRadioButton;
+    rbToolsClean: TCheckBox;
+    rbToolsErase: TCheckBox;
+    rbToolsRPM: TCheckBox;
+    rbToolsSeek: TCheckBox;
     sbConv: TScrollBox;
     sbRead: TScrollBox;
     sbWrite: TScrollBox;
     Separator1: TMenuItem;
-    NewDB: TOpenDialog;
-    OpenDialog1: TOpenDialog;
     pnCmd: TPanel;
-    SQLite3Connection1: TSQLite3Connection;
-    SQLQueryDir: TSQLQuery;
-    SQLTransaction1: TSQLTransaction;
     tbConv: TTabSheet;
     tbRead: TTabSheet;
     tbSettings: TTabSheet;
@@ -488,11 +520,16 @@ type
     procedure edWriteFileNameAcceptFileName(Sender: TObject; var Value: String);
     procedure edWriteFileNameChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure Create_Filename;
     procedure CMD_Generate;
+{$IFDEF WINDOWS}
     procedure Get_DeviceCOM;
+{$ELSE}
+    procedure Get_DeviceCOMLinux;
+{$ENDIF}
     procedure Get_FormatSpecs_Read;
     procedure Get_FormatSpecs_Write;
     procedure Get_FormatSpecs_Conv;
@@ -526,8 +563,17 @@ type
     procedure Refresh_Templates_Write;
     procedure Refresh_WriteFormSpec;
     procedure Set_View;
-  private
 
+    procedure performModalCmdAction(const command: string);
+
+    procedure performCmdAction(const cmd: string;
+                               const param: string;
+                               const specifyDevice: boolean;
+                               const specifyDrive: boolean);
+
+//    procedure LaunchURL(const URL: string);
+  private
+    FInClick: Boolean;
   public
 
   end;
@@ -559,17 +605,18 @@ uses
 
 function DirCheck(const dir:string; add_if_length_is_zero:boolean=false): String;
   begin
+
     if length(dir)=0 then begin
       if add_if_length_is_zero then
-        result:='\'
+        result:=PATH_SPECIFIER
       else
         result:='';
       exit;
     end;
-    if dir[length(dir)]='\' then
+    if dir[length(dir)]=PATH_SPECIFIER then
       result:=dir
     else
-      result:=dir+'\';
+      result:=dir+PATH_SPECIFIER;
   end;
 
 function ExtractFileName_WithoutExt(const AFilename: string): string;
@@ -626,10 +673,43 @@ begin
   openDialog.Free;
 end;
 
+{$IFNDEF WINDOWS}
+procedure TForm1.Get_DeviceCOMLinux;
+var
+  SearchRec: TSearchRec;
+begin
+  cbGWDevCOM.Items.Clear;
+
+  // Look for common USB/serial devices
+  if FindFirst('/dev/ttyUSB*', faAnyFile, SearchRec) = 0 then
+  begin
+    repeat
+      cbGWDevCOM.Items.Add('/dev/' + SearchRec.Name);
+    until FindNext(SearchRec) <> 0;
+    FindClose(SearchRec);
+  end;
+
+  // Also include ACM devices (Arduino, some adapters)
+  if FindFirst('/dev/ttyACM*', faAnyFile, SearchRec) = 0 then
+  begin
+    repeat
+      cbGWDevCOM.Items.Add('/dev/' + SearchRec.Name);
+    until FindNext(SearchRec) <> 0;
+    FindClose(SearchRec);
+  end;
+
+  // Clear selection
+  cbGWDevCOM.Text := '';
+  cbGWDrive.Text := '';
+end;
+{$ENDIF}
+
+{$IFDEF WINDOWS}
 procedure TForm1.Get_DeviceCOM;
 var
   reg: TRegistry;
   r: integer;
+
 begin
   Reg := TRegistry.Create;
   cbGWDevCOM.Items.Clear;
@@ -639,83 +719,87 @@ begin
     begin
       Reg.GetValueNames(cbGWDevCOM.Items);
       for r := 0 to cbGWDevCOM.Items.Count - 1 do
-        cbGWDevCOM.Items[r] := Reg.ReadString(cbGWDevCOM.Items[r]);
+       cbGWDevCOM.Items[r] := Reg.ReadString(cbGWDevCOM.Items[r]);
     end;
     cbGWDevCOM.Text := '';
     cbGWDrive.Text := '';
   finally
-    Reg.Free;
+   Reg.Free;
   end;
 end;
+{$ENDIF}
 
 procedure TForm1.FormShow(Sender: TObject);
 var
   gw :string;
 begin
-  sAppName := 'FluxMyFluffyFloppy ';
-  sAppVersion := 'v5.2.7';
-  sAppDate := '2026-01-13';
+  sAppName := APP_NAME;
+  sAppVersion := APP_VERSION;
+  sAppDate := APP_DATE;
   sAppVersion_ReadTmpl := 'v4.00';
   sAppVersion_WriteTmpl := 'v4.00';
-  AboutGW := 'Requires "Greaseweazle v1.22+" (and optional "diskdefs_.cfg")';
+  AboutGW := 'Requires "Greaseweazle v1.22+" (and optional "' + GW_DISKDEF_FOLDER + '_.cfg")';
   Form1.Caption := sAppName + sAppVersion;
 
   sAppPath := Dircheck(ExtractFilePath(ParamStr(0)));
-  if DirectoryExists(sAppPath + 'Diskdefs') = false then CreateDir(sAppPath + 'Diskdefs');
-  if DirectoryExists(sAppPath + 'Templates') = false then CreateDir(sAppPath + 'Templates');
-  if DirectoryExists(sAppPath + 'Greaseweazle') = false then CreateDir(sAppPath + 'Greaseweazle');
+  if DirectoryExists(sAppPath + GW_DISKDEF_FOLDER) = false then CreateDir(sAppPath + GW_DISKDEF_FOLDER);
+  if DirectoryExists(sAppPath + GW_TEMPLATE_FOLDER) = false then CreateDir(sAppPath + GW_TEMPLATE_FOLDER);
+  if DirectoryExists(sAppPath + GW_APP_FILE) = false then CreateDir(sAppPath + GW_APP_FILE);
 
   // No INI
-  if FileExists(sAppPath + 'FluxMyFluffyFloppy.ini') = False then
+  if FileExists(sAppPath + GW_INI_FILE) = False then
     try
-     INI := TINIFile.Create(sAppPath + 'FluxMyFluffyFloppy.ini');
-     INI.WriteString('FluxMyFluffyFloppy', 'Version', sAppVersion);
-     INI.WriteInteger('FluxMyFluffyFloppy', 'VersionINI', 10);
-     INI.WriteInteger('FluxMyFluffyFloppy', 'Height', 770);
-     INI.WriteInteger('FluxMyFluffyFloppy', 'Width', 935);
-     INI.WriteBool('FluxMyFluffyFloppy', 'ShowArg', true);
-     INI.WriteString('FluxMyFluffyFloppy', 'Greaseweazle', '');
-     INI.WriteBool('FluxMyFluffyFloppy', 'SaveBoolGWDevCom', false);
-     INI.WriteString('FluxMyFluffyFloppy', 'SaveGWDevice', '');
-     INI.WriteBool('FluxMyFluffyFloppy', 'SaveBoolGWDrive', false);
-     INI.WriteString('FluxMyFluffyFloppy', 'SaveGWDrive', '');
-     INI.WriteBool('FluxMyFluffyFloppy', 'CodepageCMD', true);
-     INI.WriteString('FluxMyFluffyFloppy', 'Diskdefs', sAppPath + 'Diskdefs\');
-     INI.WriteString('FluxMyFluffyFloppy', 'FolderTemplates', sAppPath + 'Templates\');
-     INI.WriteString('FluxMyFluffyFloppy', 'LastFolder_Read_Dest', AppendPathDelim(GetUserDir + 'Documents'));
-     INI.WriteString('FluxMyFluffyFloppy', 'LastFolder_Write_Source', AppendPathDelim(GetUserDir + 'Documents'));
-     INI.WriteString('FluxMyFluffyFloppy', 'LastFolder_Convert_Source', sAppPath);
-     INI.WriteString('FluxMyFluffyFloppy', 'LastFolder_Convert_Dest', sAppPath);
-     INI.WriteBool('FluxMyFluffyFloppy', 'Time', cbSetGlobalActionsTime.Checked);
-     INI.WriteBool('FluxMyFluffyFloppy', 'Backtrace', cbSetGlobalActionsBacktrace.Checked);
+     INI := TINIFile.Create(sAppPath + GW_INI_FILE);
+     INI.WriteString(FLUX_INI_NAME, 'Version', sAppVersion);
+     INI.WriteInteger(FLUX_INI_NAME, 'VersionINI', 10);
+     INI.WriteInteger(FLUX_INI_NAME, 'Height', 770);
+     INI.WriteInteger(FLUX_INI_NAME, 'Width', 935);
+     INI.WriteBool(FLUX_INI_NAME, 'ShowArg', true);
+     INI.WriteString(FLUX_INI_NAME, 'Greaseweazle', '');
+     INI.WriteBool(FLUX_INI_NAME, 'SaveBoolGWDevCom', true);
+     INI.WriteString(FLUX_INI_NAME, 'SaveGWDevice', '');
+     INI.WriteBool(FLUX_INI_NAME, 'SaveBoolGWDrive', true);
+     INI.WriteString(FLUX_INI_NAME, 'SaveGWDrive', '');
+     INI.WriteBool(FLUX_INI_NAME, 'CodepageCMD', true);
+     INI.WriteString(FLUX_INI_NAME, 'Diskdefs', sAppPath + GW_DISKDEF_FOLDER + PATH_SPECIFIER);
+     INI.WriteString(FLUX_INI_NAME, 'FolderTemplates', sAppPath + GW_TEMPLATE_FOLDER + PATH_SPECIFIER);
+     INI.WriteString(FLUX_INI_NAME, 'LastFolder_Read_Dest', AppendPathDelim(GetUserDir + GW_DOCUMENTS_FOLDER));
+     INI.WriteString(FLUX_INI_NAME, 'LastFolder_Write_Source', AppendPathDelim(GetUserDir + GW_DOCUMENTS_FOLDER));
+     INI.WriteString(FLUX_INI_NAME, 'LastFolder_Convert_Source', sAppPath);
+     INI.WriteString(FLUX_INI_NAME, 'LastFolder_Convert_Dest', sAppPath);
+     INI.WriteBool(FLUX_INI_NAME, 'Time', cbSetGlobalActionsTime.Checked);
+     INI.WriteBool(FLUX_INI_NAME, 'Backtrace', cbSetGlobalActionsBacktrace.Checked);
     finally
      ; // end if
     end;
 
-  INI := TINIFile.Create(sAppPath + 'FluxMyFluffyFloppy.ini');
-  If INI.ReadInteger('FluxMyFluffyFloppy', 'VersionINI', 00) < 10 then
+  INI := TINIFile.Create(sAppPath + GW_INI_FILE);
+  If INI.ReadInteger(FLUX_INI_NAME, 'VersionINI', 00) < 10 then
    begin
-    INI.WriteInteger('FluxMyFluffyFloppy', 'VersionINI', 10);
-    INI.WriteBool('FluxMyFluffyFloppy', 'CodepageCMD', true);
+    INI.WriteInteger(FLUX_INI_NAME, 'VersionINI', 10);
+    INI.WriteBool(FLUX_INI_NAME, 'CodepageCMD', true);
    end;
-  If INI.ReadString('FluxMyFluffyFloppy', 'Diskdefs','') = '' then INI.WriteString('FluxMyFluffyFloppy', 'Diskdefs', sAppPath + 'Diskdefs\');
-  EdGWFile.Text := INI.ReadString('FluxMyFluffyFloppy', 'Greaseweazle','');
-  mnuArguments.Checked := INI.ReadBool('FluxMyFluffyFloppy', 'ShowArg', true);
-  edReadDirDest.Directory := INI.ReadString('FluxMyFluffyFloppy', 'LastFolder_Read_Dest','');
-  edWriteFilename.InitialDir := INI.ReadString('FluxMyFluffyFloppy', 'LastFolder_Write_Source','');
-  edConvFileSource.InitialDir := INI.ReadString('FluxMyFluffyFloppy', 'LastFolder_Convert_Source','');
-  edConvDirDest.Directory := INI.ReadString('FluxMyFluffyFloppy', 'LastFolder_Convert_Dest','');
+  If INI.ReadString(FLUX_INI_NAME, 'Diskdefs','') = '' then
+    begin
+     INI.WriteString(FLUX_INI_NAME, 'Diskdefs', sAppPath + GW_DISKDEF_FOLDER + PATH_SPECIFIER);
+    end;
+  EdGWFile.Text := INI.ReadString(FLUX_INI_NAME, GW_APP_NAME,'');
+  mnuArguments.Checked := INI.ReadBool(FLUX_INI_NAME, 'ShowArg', true);
+  edReadDirDest.Directory := INI.ReadString(FLUX_INI_NAME, 'LastFolder_Read_Dest','');
+  edWriteFilename.InitialDir := INI.ReadString(FLUX_INI_NAME, 'LastFolder_Write_Source','');
+  edConvFileSource.InitialDir := INI.ReadString(FLUX_INI_NAME, 'LastFolder_Convert_Source','');
+  edConvDirDest.Directory := INI.ReadString(FLUX_INI_NAME, 'LastFolder_Convert_Dest','');
 
   // Form size height/width
-  Form1.Height := INI.ReadInteger('FluxMyFluffyFloppy', 'Height', 770);
-  Form1.Width := INI.ReadInteger('FluxMyFluffyFloppy', 'Width', 935);
+  Form1.Height := INI.ReadInteger(FLUX_INI_NAME, 'Height', 770);
+  Form1.Width := INI.ReadInteger(FLUX_INI_NAME, 'Width', 935);
   Set_View;
   // Center
   Form1.Top:=(( Screen.Height-Height)div 2);
   Form1.Left:=((Screen.Width-Width)div 2);
 
   // Where is gw.exe ?
-  gw := INI.ReadString('FluxMyFluffyFloppy', 'Greaseweazle', '');
+  gw := INI.ReadString(FLUX_INI_NAME, GW_APP_NAME, '');
   If gw <> '' then
     begin
      if FileExists(gw) = true then
@@ -724,46 +808,53 @@ begin
       end;
      if FileExists(gw) = False then
       begin
-       edGWfile.Text := Selectfile('Select Greaseweazle (gw.exe)',sAppPath + 'greaseweazle\','Application|*.exe');
+       edGWfile.Text := Selectfile('Select Greaseweazle (' + GW_APP + ')',sAppPath, GW_EXECUTABLE);
        if edGWfile.Text <> '' then
         begin
-         INI.WriteString('FluxMyFluffyFloppy', 'Greaseweazle', edGWfile.Text);
+         INI.WriteString(FLUX_INI_NAME, GW_APP_NAME, edGWfile.Text);
         end;
       end;
     end;
   If gw = '' then
     begin
-     if FileExists(sAppPath + 'greaseweazle\gw.exe') = true then
+     if FileExists(sAppPath + GW_APP) = true then
       begin
-       edGWfile.Text := sAppPath + 'greaseweazle\gw.exe';
-       INI.WriteString('FluxMyFluffyFloppy', 'Greaseweazle', sAppPath + 'greaseweazle\gw.exe');
+       edGWfile.Text := sAppPath + GW_APP;
+       INI.WriteString(FLUX_INI_NAME, GW_APP_NAME, sAppPath + GW_EXECUTABLE);
       end;
-     if FileExists(sAppPath + 'greaseweazle\gw.exe') = False then
+     if FileExists(sAppPath + GW_EXECUTABLE) = False then
       begin
-       edGWfile.Text := Selectfile('Select Greaseweazle (gw.exe)',sAppPath + 'greaseweazle\','Application|*.exe');
+       edGWfile.Text := Selectfile('Select Greaseweazle (' + GW_APP + ')',sAppPath, GW_EXECUTABLE);
        if edGWfile.Text <> '' then
         begin
-         INI.WriteString('FluxMyFluffyFloppy', 'Greaseweazle', edGWfile.Text);
+         INI.WriteString(FLUX_INI_NAME, GW_APP_NAME, edGWfile.Text);
         end;
       end;
     end;
 
   // Get possible Greaseweazle Device/COM ports
-  Get_DeviceCOM;
-  If INI.ReadBool('FluxMyFluffyFloppy', 'SaveBoolGWDevCom', false) = true then
+
+{$IFDEF WINDOWS}
+    Get_DeviceCOM;
+{$ELSE}
+    Get_DeviceCOMLinux;
+  {$ENDIF}
+
+  If INI.ReadBool(FLUX_INI_NAME, 'SaveBoolGWDevCom', false) = true then
    begin
-    cbGWDevCOM.Text := INI.ReadString('FluxMyFluffyFloppy', 'SaveGWDevice', '');
+    cbGWDevCOM.Text := INI.ReadString(FLUX_INI_NAME, 'SaveGWDevice', '');
    end;
-  If INI.ReadBool('FluxMyFluffyFloppy', 'SaveBoolGWDrive', false) = true then
+  If INI.ReadBool(FLUX_INI_NAME, 'SaveBoolGWDrive', false) = true then
    begin
-    cbGWDrive.Text := INI.ReadString('FluxMyFluffyFloppy', 'SaveGWDrive', '');
+    cbGWDrive.Text := INI.ReadString(FLUX_INI_NAME, 'SaveGWDrive', '');
    end;
-  cbGWHW.Text := INI.ReadString('FluxMyFluffyFloppy', 'GWHW', 'Greaseweazle');
+  cbGWHW.Text := INI.ReadString(FLUX_INI_NAME, 'GWHW', 'Greaseweazle');
 
   // Where are diskdefs_.cfg located?
   Refresh_Diskdefs_DropDown;
 
   // Create StringLists Read/Conv Destination fileextension
+  // TODO: Read these from a configuration file
   FormatDest_Ext := TStringList.Create;
   FormatDest_Ext.Add('');
   FormatDest_Ext.Add('A2R (Applesauce)');
@@ -807,11 +898,12 @@ begin
   FormatDest_Ext.Add('TD0 (Teledisk)');
   FormatDest_Ext.Add('XDF (XDF)');
 
-  EdGWFile.Filter := 'gw.exe|*.exe';
+  EdGWFile.Filter := 'gw.exe|*.exe|gw';
   EdWriteFileName.Filter := 'Floppy-Images (*.*)|*.a2r;*.adf;*.adm;*.adl;*.ads;*.ctr;*.d1m;*.d2m;*.d4m;*.d64;*.d71;*.d81;*.d88;*.dcp;*.dim;*.dmk;*.do;*.dsd;*.dsk;*.edsk;*.fd;*.fdi;*hdm;*hfe;*.img;*.ima;*.imd;*.ipf;*.msa;*.nsi;*.po;*.raw;*.scp;*.sf7;*.ssd;*.st;*.td0;*.xdf|Applesauce (a2r)|*.a2r|Acorn (adl)|*.adl|Acorn (adm)|*.adm|Acorn (ads)|*.ads|Acorn (dsd)|*.dsd|Acorn (ssd)|*.ssd|AmigaDOS (adf)|*.adf|Apple II (do)|*.do||Apple II (po)|*.po|Atari ST (msa)|*.msa|Atari ST (st)|*.st|Commodore 1541 (d64)|*.d64|Commodore 1571 (d71)|*.d71|Commodore 1581 (d81)|*.d81|CT Raw (ctr)|*.ctr|Disciple (mgt)|*.mgt|DSK (dsk)|*.dsk|EDSK (edsk)|*.edsk|Floppy image (ima)|*.ima|Floppy image (img)|*.img|HDM (hdm)|*.hdm|HFE (HxC Floppy Emulator) (hfe)|*.hfe|ImageDisk image (imd)|*.imd|IPF (ipf)|*.ipf|Kryoflux (raw)|*.raw|NS DOS Northstar (nsi)|*.nis|SEGA (sf7)|*.sf7|SuperCardPro (scp)|*.scp';
   edConvFileSource.Filter := 'Floppy-Images (*.*)|*.a2r;*.adf;*.adm;*.adl;*.ads;*.ctr;*.d1m;*.d2m;*.d4m;*.d64;*.d71;*.d81;*.d88;*.dcp;*.dim;*.dmk;*.do;*.dsd;*.dsk;*.edsk;*.fd;*.fdi;*hdm;*hfe;*.img;*.ima;*.imd;*.ipf;*.msa;*.nsi;*.po;*.raw;*.scp;*.sf7;*.ssd;*.st;*.td0;*.xdf|Applesauce (a2r)|*.a2r|Acorn (adl)|*.adl|Acorn (adm)|*.adm|Acorn (ads)|*.ads|Acorn (dsd)|*.dsd|Acorn (ssd)|*.ssd|AmigaDOS (adf)|*.adf|Apple II (do)|*.do||Apple II (po)|*.po|Atari ST (msa)|*.msa|Atari ST (st)|*.st|Commodore 1541 (d64)|*.d64|Commodore 1571 (d71)|*.d71|Commodore 1581 (d81)|*.d81|CT Raw (ctr)|*.ctr|Disciple (mgt)|*.mgt|DSK (dsk)|*.dsk|EDSK (edsk)|*.edsk|Floppy image (ima)|*.ima|Floppy image (img)|*.img|HDM (hdm)|*.hdm|HFE (HxC Floppy Emulator) (hfe)|*.hfe|ImageDisk image (imd)|*.imd|IPF (ipf)|*.ipf|Kryoflux (raw)|*.raw|NS DOS Northstar (nsi)|*.nis|SEGA (sf7)|*.sf7|SuperCardPro (scp)|*.scp';
 
   // Create StringList Read Diskdefs
+  // TODO: Read these from a configuration file
   FormatSpecs_Read := TStringList.Create;
   FormatSpecs_Read.Add('');
   FormatSpecs_Read.Add('acorn.adfs.160');
@@ -958,6 +1050,7 @@ begin
 
 
   // Create Stringlist Write Diskdefs
+  // TODO: Read these from a configuration file
   FormatSpecs_Write := TStringList.Create;
   FormatSpecs_Write.Add('');
   FormatSpecs_Write.Add('acorn.adfs.160');
@@ -1103,6 +1196,7 @@ begin
   FormatSpecs_Write.Add('zx.watford.ss40');
 
   // Create StringList Convert  Diskdefs
+  // TODO: Read these from a configuration file
   FormatSpecs_Conv := TStringList.Create;
   FormatSpecs_Conv.Add('');
   FormatSpecs_Conv.Add('acorn.adfs.160');
@@ -1259,6 +1353,20 @@ begin
   CMD_Generate;
 end;
 
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  rbToolsErase.Checked:=true;
+  rbToolsSeek.Checked:=false;
+  rbToolsRPM.Checked:=false;
+
+  rbSetDelays.Checked:=true;
+  rbSetGetPIN.Checked:=false;
+  rbSetFirmware.Checked:=false;
+  rbGetPIN.Checked:=true;
+
+  rbToolsSeekClick(rbToolsSeek);
+end;
+
 // location diskdefs_.cfg - Refresh "format spec" dropdown
 procedure TForm1.Refresh_Diskdefs_DropDown;
 var
@@ -1268,8 +1376,8 @@ var
   INITmplFolder : TIniFile;
 begin
   try
-    INITmplFolder := TINIFile.Create(sAppPath + 'FluxMyFluffyFloppy.ini');
-    TmplFolder := INITmplFolder.ReadString('FluxMyFluffyFloppy', 'Diskdefs', '');
+    INITmplFolder := TINIFile.Create(sAppPath + GW_INI_FILE);
+    TmplFolder := INITmplFolder.ReadString(FLUX_INI_NAME, GW_DISKDEF_FOLDER, '');
     INITmplFolder.Free;
     cbReadTplFormatSrc.Items.Clear;
     cbReadTplFormatSrc.Items.Add('Internal');
@@ -1308,7 +1416,7 @@ begin
    LogFilename := '';
    if edGWFile.Text = '' then
     begin
-      answer := MessageDlg('Please define location of Greaseweazle (gw.exe)!',mtWarning, [mbOK], 0);
+      answer := MessageDlg('Please define location of Greaseweazle (' + GW_APP + ')!',mtWarning, [mbOK], 0);
       if answer = mrOk then
        begin
         edGWFile.SetFocus;
@@ -1317,7 +1425,7 @@ begin
     end;
    if Fileexists(edGWFile.Text) = false then
     begin
-     answer := MessageDlg('Greaseweazle (gw.exe) not found!',mtWarning, [mbCancel], 0);
+     answer := MessageDlg(GW_APP_NAME + ' (' + GW_APP + ') not found!',mtWarning, [mbCancel], 0);
      if answer = mrCancel then
       begin
        edGWFile.SetFocus;
@@ -1326,7 +1434,7 @@ begin
     end;
 
    // Read  ######################################################################
-   if pcActions.ActivePageIndex = 0 then
+   if pcActions.ActivePageIndex = GW_PROP_PAGE_READ then
      begin
        if edReadDirDest.Text = '' then
         begin
@@ -1441,7 +1549,7 @@ begin
      if cbReadTplLogOutput.Checked = false then
       begin
        aLine := EdGWCMD.Lines.Text;
-       frmGW.Caption:= 'Greaseweazle - Read';
+       frmGW.Caption:= GW_APP_NAME + ' - Read';
        frmGW.showmodal;
       end;
 
@@ -1451,13 +1559,13 @@ begin
         if cbReadTplLogBoth.Checked = false then
          begin
           aLine := '' + EdGWCMD.Lines.Text + ' 2> "' + LogDir + LogFileName + '_output.txt"';
-          frmGW.Caption:= 'Greaseweazle - Read';
+          frmGW.Caption:= GW_APP_NAME + ' - Read';
           frmGW.showmodal;
          end;
         if cbReadTplLogBoth.Checked = true then
          begin
           aLine := '' + EdGWCMD.Lines.Text + ' 2>> "' + LogDir + LogFilename + '"';
-          frmGW.Caption:= 'Greaseweazle - Read';
+          frmGW.Caption:= GW_APP_NAME + ' - Read';
           frmGW.showmodal;
          end;
        end;
@@ -1474,7 +1582,7 @@ begin
   // read end
 
   // Write  ######################################################################
-   if pcActions.ActivePageIndex = 1 then
+   if pcActions.ActivePageIndex = GW_PROP_PAGE_WRITE then
      begin
       if edWriteFilename.Text = '' then
        begin
@@ -1487,12 +1595,12 @@ begin
         if answer = mrOk then exit;
        end;
       aLine := EdGWCMD.Lines.Text;
-      frmGW.Caption:= 'Greaseweazle - Write';
+      frmGW.Caption:= GW_APP_NAME + ' - Write';
       frmGW.showmodal;
      end;
 
    // Convert ####################################################################
-   if pcActions.ActivePageIndex = 2 then
+   if pcActions.ActivePageIndex = GW_PROP_PAGE_CONVERT then
     begin
      if edConvFileSource.Text = '' then
       begin
@@ -1530,30 +1638,35 @@ begin
        if answer = mrOk then exit;
       end;
      aLine := EdGWCMD.Lines.Text;
-     frmGW.Caption:= 'Greaseweazle - Convert';
+     frmGW.Caption:= GW_APP_NAME + ' - Convert';
      frmGW.showmodal;
     end;
 
    //Tools ####################################################################
-   if pcActions.ActivePage.PageIndex = 3 then
+   if pcActions.ActivePage.PageIndex = GW_PROP_PAGE_TOOLS then
      begin
       aLine := EdGWCMD.Lines.Text;
-      frmGW.Caption:= 'Greaseweazle - ' + btGo.Caption;
+      frmGW.Caption:= GW_APP_NAME + ' - ' + btGo.Caption;
       frmGW.showmodal;
      end;
 
    //Settings ####################################################################
-   if pcActions.ActivePage.PageIndex = 4 then
+   if pcActions.ActivePage.PageIndex = GW_PROP_PAGE_SETTINGS then
      begin
       aLine := EdGWCMD.Lines.Text;
-      frmGW.Caption:= 'Greaseweazle - ' + btGo.Caption;
+      frmGW.Caption:= GW_APP_NAME + ' - ' + btGo.Caption;
       frmGW.showmodal;
      end;
 end;
 
 procedure TForm1.btConvExplorerClick(Sender: TObject);
 begin
+{$IFDEF WINDOWS}
  SysUtils.ExecuteProcess('explorer.exe', '/n,'+edConvDirDest.text, []);
+{$ELSE}
+//TODO: Test
+ SysUtils.ExecuteProcess('bash', edConvDirDest.text);
+{$ENDIF}
 end;
 
 procedure TForm1.btConvClearClick(Sender: TObject);
@@ -1577,72 +1690,40 @@ begin
 end;
 
 procedure TForm1.btGWBandwidthClick(Sender: TObject);
-var
-  answer : integer;
 begin
-  if fileexists(edGWFile.Text) = true then
-  begin
-   aLine := '"' + Form1.EdGWFile.Text + '" bandwidth';
-   if cbGWDevCOM.Text <> '' then aLine := aLine + ' --device ' + cbGWDevCOM.Text + '"';
-   frmGW.Caption:= 'Greaseweazle - Bandwidth';
-   frmGW.showmodal;
-  end
-  else
-  begin
-   answer := MessageDlg('Invalid filename or file (gw.exe) not found!',mtWarning, [mbOK], 0);
-   if answer = mrOk then exit;
-  end;
+  performModalCmdAction('bandwidth');
 end;
 
 procedure TForm1.btGWCMDDirClick(Sender: TObject);
 var
- answer : integer;
+  Dir: string;
 begin
-  if fileexists(edGWFile.Text) = true then
+  if FileExists(edGWFile.Text) then
   begin
-   CmdDir('/k "', 'cd ' + DirCheck(ExtractfileDir(edGWFile.Text)) + '"');
+    Dir := ExtractFileDir(edGWFile.Text);
+
+    // Set working directory for future process runs
+    SetCurrentDir(Dir);
+
+    MessageDlg('Working directory set to:' + LineEnding + Dir,
+      mtInformation, [mbOK], 0);
   end
   else
-  begin
-   answer := MessageDlg('Directory not found!',mtWarning, [mbOK], 0);
-   if answer = mrOk then exit;
-  end;
+    MessageDlg('Directory not found!', mtWarning, [mbOK], 0);
 end;
 
 procedure TForm1.btGWInfoClick(Sender: TObject);
 var
   answer : integer;
 begin
-  if fileexists(edGWFile.Text) = true then
-  begin
-   aLine := '"' + Form1.EdGWFile.Text + '" info';
-   if cbGWDevCOM.Text <> '' then aLine := aLine + ' --device ' + cbGWDevCOM.Text + '"';
-   frmGW.Caption:= 'Greaseweazle - Info';
-   frmGW.showmodal;
-  end
-  else
-  begin
-   answer := MessageDlg('Invalid filename or file (gw.exe) not found!',mtWarning, [mbOK], 0);
-   if answer = mrOk then exit;
-  end;
+  performModalCmdAction('info');
 end;
 
 procedure TForm1.btGWResetClick(Sender: TObject);
 var
   answer : integer;
 begin
-  if fileexists(edGWFile.Text) = true then
-  begin
-   aLine := '"' + Form1.EdGWFile.Text + '" reset';
-   if cbGWDevCOM.Text <> '' then aLine := aLine + ' --device ' + cbGWDevCOM.Text + '"';
-   frmGW.Caption:= 'Greaseweazle - Reset';
-   frmGW.showmodal;
-  end
-  else
-  begin
-   answer := MessageDlg('Invalid filename or file (gw.exe) not found!',mtWarning, [mbOK],0);
-   if answer = mrOk then exit;
-  end;
+  performModalCmdAction('reset');
 end;
 
 procedure TForm1.btReadDestExploreClick(Sender: TObject);
@@ -1684,7 +1765,7 @@ var
   tmp : string;
   answer : Integer;
 begin
-  tmp := INI.ReadString('FluxMyFluffyFloppy', 'FolderTemplates', '');
+  tmp := INI.ReadString(FLUX_INI_NAME, 'FolderTemplates', '');
   if DirectoryExists(tmp) = false then
    begin
     answer := MessageDlg('In options defined templates folder does not exist!' + chr(10) + 'Cannot delete the selected template!',mtWarning, [mbOK], 0);
@@ -1692,13 +1773,13 @@ begin
    end;
 
   try
-    if fileexists(Dircheck(tmp) + cbReadTplName.Text + '.inir') then
+    if fileexists(Dircheck(tmp) + cbReadTplName.Text + GW_INI_READ_EXT) then
     begin
      answer := MessageDlg('Do you really want to delete the selected template?',mtConfirmation, [mbYes,mbCancel], 0);
      if answer = mrCancel then exit;
      if answer = mrYes then
      begin
-      Deletefile(PChar(Dircheck(tmp) + cbReadTplName.Text + '.inir'));
+      Deletefile(PChar(Dircheck(tmp) + cbReadTplName.Text + GW_INI_READ_EXT));
       Refresh_Templates_Read_DropDown;
      end;
     end;
@@ -1750,8 +1831,8 @@ begin
    if answer = mrOk then exit;
  end;
 
- tmp := INI.ReadString('FluxMyFluffyFloppy', 'FolderTemplates', '');
- if tmp = '' then CreateDir(sAppPath + 'Templates\');
+ tmp := INI.ReadString(FLUX_INI_NAME, 'FolderTemplates', '');
+ if tmp = '' then CreateDir(sAppPath + 'Templates' + PATH_SPECIFIER);
  if DirectoryExists(tmp) = false then
   begin
    answer := MessageDlg('In options defined templates folder does not exist.' + chr(10) + 'Please redefine! Template is not saved.',mtWarning, [mbOK], 0);
@@ -1760,7 +1841,7 @@ begin
 
   if cbReadTplName.Text <> '' then
    begin
-    INIRead := TINIFile.Create(DirCheck(tmp) + cbReadTplName.Text + '.inir');
+    INIRead := TINIFile.Create(DirCheck(tmp) + cbReadTplName.Text + GW_INI_READ_EXT);
     try
       INIRead.DeleteKey('Settings','RPM'); // older than 2.00
       INIRead.WriteString('FluxMyFluffyFloppy-Read-Template', 'Version', sAppVersion_ReadTmpl);
@@ -1820,13 +1901,13 @@ begin
   if fileexists(edGWFile.Text) = true then
   begin
    aLine := '"' + Form1.EdGWFile.Text + '" delays';
-   if cbGWDevCOM.Text <> '' then aLine := aLine + ' --device ' + cbGWDevCOM.Text + '"';
-   frmGW.Caption:= 'Greaseweazle - Info Delays';
+   if cbGWDevCOM.Text <> '' then aLine := aLine + ' ` ' + cbGWDevCOM.Text + '"';
+   frmGW.Caption:= GW_APP_NAME + ' - Info Delays';
    frmGW.showmodal;
   end
   else
   begin
-   answer := MessageDlg('Invalid filename or file (gw.exe) not found!',mtWarning, [mbOK], 0);
+   answer := MessageDlg('Invalid filename or file (' + GW_APP + ') not found!',mtWarning, [mbOK], 0);
    if answer = mrOk then exit;
   end;
 end;
@@ -1836,20 +1917,20 @@ var
  tmp : string;
  answer : Integer;
 begin
-  tmp := INI.ReadString('FluxMyFluffyFloppy', 'FolderTemplates', '');
+  tmp := INI.ReadString(FLUX_INI_NAME, 'FolderTemplates', '');
   if DirectoryExists(tmp) = false then
    begin
     answer := MessageDlg('In options defined templates folder does not exist!' + chr(10) + 'Cannot delete the selected template!',mtWarning, [mbOK], 0);
     if answer = mrOk then exit;
    end;
   try
-    if fileexists(Dircheck(tmp) + cbWriteTplName.Text + '.iniw') then
+    if fileexists(Dircheck(tmp) + cbWriteTplName.Text + GW_INI_WRITE_EXT) then
     begin
      answer := MessageDlg('Do you really want to delete the following template?',mtConfirmation, [mbYes,mbCancel], 0);
      if answer = mrCancel then exit;
      if answer = mrYes then
      begin
-      Deletefile(PChar(Dircheck(tmp) + cbWriteTplName.Text + '.iniw'));
+      Deletefile(PChar(Dircheck(tmp) + cbWriteTplName.Text + GW_INI_WRITE_EXT));
       Refresh_Templates_Write_DropDown;
      end;
     end;
@@ -1896,8 +1977,8 @@ begin
    if answer = mrOk then exit;
   end;
 
- tmp := INI.ReadString('FluxMyFluffyFloppy', 'FolderTemplates', '');
- if tmp = '' then CreateDir(sAppPath + 'Templates\');
+ tmp := INI.ReadString(FLUX_INI_NAME, 'FolderTemplates', '');
+ if tmp = '' then CreateDir(sAppPath + 'Templates' + PATH_SPECIFIER);
  if DirectoryExists(tmp) = false then
   begin
    answer := MessageDlg('In options defined templates folder does not exist.' + chr(10) + 'Please redefine! Template is not saved.',mtWarning, [mbOK], 0);
@@ -1906,7 +1987,7 @@ begin
 
  if cbWriteTplName.Text <> '' then
   begin
-   IniWrite := TINIFile.Create(DirCheck(tmp) + cbWriteTplName.Text + '.iniw');
+   IniWrite := TINIFile.Create(DirCheck(tmp) + cbWriteTplName.Text + GW_INI_WRITE_EXT);
    try
     IniWrite.DeleteKey('Settings','RPM'); // older than 2.00
     IniWrite.DeleteKey('Settings','Erase-Empty'); // older than 2.00
@@ -1946,7 +2027,11 @@ end;
 
 procedure TForm1.btGWRefreshUSBClick(Sender: TObject);
 begin
+{$IFDEF WINDOWS}
  Get_DeviceCOM;
+{$ELSE}
+ Get_DeviceCOMLinux;
+{$ENDIF}
 end;
 
 procedure TForm1.cbConvTplFlippyReverseClick(Sender: TObject);
@@ -1962,8 +2047,8 @@ var
   INITmplFolder : TIniFile;
 begin
   try
-    INITmplFolder := TINIFile.Create(sAppPath + 'FluxMyFluffyFloppy.ini');
-    TmplFolder := INITmplFolder.ReadString('FluxMyFluffyFloppy', 'FolderTemplates', '');
+    INITmplFolder := TINIFile.Create(sAppPath + GW_INI_FILE);
+    TmplFolder := INITmplFolder.ReadString(FLUX_INI_NAME, 'FolderTemplates', '');
     If TmplFolder = '' then exit;
     INITmplFolder.Free;
 
@@ -1998,12 +2083,12 @@ var
   TmplFolder: String;
 begin
   //Read-Template
-  INITmplFolder := TINIFile.Create(sAppPath + 'FluxMyFluffyFloppy.ini');
-  TmplFolder := INITmplFolder.ReadString('FluxMyFluffyFloppy', 'FolderTemplates', '');
+  INITmplFolder := TINIFile.Create(sAppPath + GW_INI_FILE);
+  TmplFolder := INITmplFolder.ReadString(FLUX_INI_NAME, 'FolderTemplates', '');
   If TmplFolder = '' then exit;
   INITmplFolder.Free;
 
-  iniRefreshWrite := TINIFile.Create(DirCheck(TmplFolder) + cbWriteTplName.Text + '.iniw');
+  iniRefreshWrite := TINIFile.Create(DirCheck(TmplFolder) + cbWriteTplName.Text + GW_INI_WRITE_EXT);
   try
     //ver := iniRefreshRead.ReadString('FluxMyFluffyFloppy-Write-Template','Version','');
     //name := iniRefreshRead.ReadString('FluxMyFluffyFloppy-Write-Template', 'Name', '');
@@ -2043,8 +2128,8 @@ var
   INITmplFolder : TIniFile;
 begin
   try
-    INITmplFolder := TINIFile.Create(sAppPath + 'FluxMyFluffyFloppy.ini');
-    TmplFolder := INITmplFolder.ReadString('FluxMyFluffyFloppy', 'FolderTemplates', '');
+    INITmplFolder := TINIFile.Create(sAppPath + GW_INI_FILE);
+    TmplFolder := INITmplFolder.ReadString(FLUX_INI_NAME, 'FolderTemplates', '');
     If TmplFolder = '' then exit;
     INITmplFolder.Free;
 
@@ -2079,12 +2164,12 @@ var
   TmplFolder: String;
 begin
   //Read-Template
-  INITmplFolder := TINIFile.Create(sAppPath + 'FluxMyFluffyFloppy.ini');
-  TmplFolder := INITmplFolder.ReadString('FluxMyFluffyFloppy', 'FolderTemplates', '');
+  INITmplFolder := TINIFile.Create(sAppPath + GW_INI_FILE);
+  TmplFolder := INITmplFolder.ReadString(FLUX_INI_NAME, 'FolderTemplates', '');
   If TmplFolder = '' then exit;
   INITmplFolder.Free;
 
-  iniRefreshRead := TINIFile.Create(DirCheck(TmplFolder) + cbReadTplName.Text + '.inir');
+  iniRefreshRead := TINIFile.Create(DirCheck(TmplFolder) + cbReadTplName.Text + GW_INI_READ_EXT);
   try
     edReadTplDesc.Text := iniRefreshRead.ReadString('FluxMyFluffyFloppy-Read-Template', 'Description', '');
 
@@ -2248,7 +2333,7 @@ end;
 procedure TForm1.cbSrcAsDesDirChange(Sender: TObject);
 begin
  if cbSrcAsDesDir.Checked then edConvDirDest.Directory:= DirCheck(ExtractfileDir(edConvFileSource.Text));
- if cbSrcAsDesDir.Checked = false then edConvDirDest.Directory :=INI.ReadString('FluxMyFluffyFloppy', 'LastFolder_Convert_Dest','');
+ if cbSrcAsDesDir.Checked = false then edConvDirDest.Directory :=INI.ReadString(FLUX_INI_NAME, 'LastFolder_Convert_Dest','');
 end;
 
 procedure TForm1.cbSrcAsDesFileChange(Sender: TObject);
@@ -2407,6 +2492,7 @@ begin
  cbConvFormatOption.Items.Clear;
  cbConvFormatOption.Enabled:= false;
 
+ //TODO: Read these form an XML file
  if cbConvFileFormat.Text = 'SCP (SuperCardPro)' then
  begin
   cbConvFormatOption.Enabled:= true;
@@ -2695,7 +2781,7 @@ var
 begin
   FormatSpecs_ReadDiskDefs := TStringList.Create;
   FormatSpecs_ReadDiskDefs.Clear;
-  dd := DirCheck(INI.ReadString('FluxMyFluffyFloppy', 'Diskdefs', '')) + cbReadTplFormatSrc.Text + '.cfg';
+  dd := DirCheck(INI.ReadString(FLUX_INI_NAME, GW_DISKDEF_FOLDER, '')) + cbReadTplFormatSrc.Text + GW_CONFIG_EXT;
   if fileexists(dd) then
    begin
     FormatSpecs_ReadDiskDefs.Add('');
@@ -2727,7 +2813,7 @@ var
 begin
   FormatSpecs_WriteDiskDefs := TStringList.Create;
   FormatSpecs_WriteDiskDefs.Clear;
-  dd := DirCheck(INI.ReadString('FluxMyFluffyFloppy', 'Diskdefs', '')) + cbWriteTplFormatSrc.Text + '.cfg';
+  dd := DirCheck(INI.ReadString(FLUX_INI_NAME, GW_DISKDEF_FOLDER, '')) + cbWriteTplFormatSrc.Text + GW_CONFIG_EXT;
   if fileexists(dd) then
    begin
     FormatSpecs_WriteDiskDefs.Add('');
@@ -2759,7 +2845,7 @@ var
 begin
  FormatSpecs_ConvDiskDefs := TStringList.Create;
  FormatSpecs_ConvDiskDefs.Clear;
- dd := DirCheck(INI.ReadString('FluxMyFluffyFloppy', 'Diskdefs', '')) + cbConvDiskdefs.Text + '.cfg';
+ dd := DirCheck(INI.ReadString(FLUX_INI_NAME, GW_DISKDEF_FOLDER, '')) + cbConvDiskdefs.Text + GW_CONFIG_EXT;
  if fileexists(dd) then
   begin
    FormatSpecs_ConvDiskDefs.Add('');
@@ -2859,24 +2945,48 @@ begin
 
 end;
 
+procedure LaunchURL(const URL: string);
+var
+  Proc: TProcess;
+begin
+  {$IFDEF WINDOWS}
+  OpenURL(URL);
+  {$ELSE}
+  if URL <> '' then
+  begin
+    Proc := TProcess.Create(nil);
+    try
+      Proc.Executable := 'xdg-open';
+      Proc.Parameters.Add(URL);
+      Proc.Options := [poNoConsole, poWaitOnExit];
+      Proc.Execute;
+    finally
+      Proc.Free;
+    end;
+  end;
+  {$ENDIF}
+end;
+
+
+
 procedure TForm1.mnuFMFFClick(Sender: TObject);
 begin
-  OpenURL('https://github.com/FrankieTheFluff/FluxMyFluffyFloppy');
+  LaunchURL('https://github.com/FrankieTheFluff/FluxMyFluffyFloppy');
 end;
 
 procedure TForm1.mnuGWDownloadClick(Sender: TObject);
 begin
-  OpenURL('https://github.com/keirf/greaseweazle/wiki/Download-Host-Tools');
+  LaunchURL('https://github.com/keirf/greaseweazle/wiki/Download-Host-Tools');
 end;
 
 procedure TForm1.mnuGWGettingStartedClick(Sender: TObject);
 begin
- OpenURL('https://github.com/keirf/greaseweazle/wiki/Getting-Started');
+ LaunchURL('https://github.com/keirf/greaseweazle/wiki/Getting-Started');
 end;
 
 procedure TForm1.mnuWebsiteClick(Sender: TObject);
 begin
- OpenURL('https://github.com/keirf/Greaseweazle');
+ LaunchURL('https://github.com/keirf/Greaseweazle');
 end;
 
 procedure TForm1.opSetFWFileClick(Sender: TObject);
@@ -2898,7 +3008,7 @@ procedure TForm1.pcActionsChange(Sender: TObject);
 begin
   Set_View;
   btGo.Default:=false;
-  if pcActions.ActivePageIndex = 0 then
+  if pcActions.ActivePageIndex = GW_PROP_PAGE_READ then
    begin
     if cbReadTplName.Text <> '' then
     begin
@@ -2910,7 +3020,7 @@ begin
     cbReadTplLogOutput.Visible:=true;
     cbReadTplLogBoth.Visible:=true;
    end;
-  if pcActions.ActivePageIndex = 1 then
+  if pcActions.ActivePageIndex = GW_PROP_PAGE_WRITE then
    begin
     if cbWriteTplName.Text <> '' then
     begin
@@ -2922,7 +3032,7 @@ begin
     cbReadTplLogOutput.Visible:=false;
     cbReadTplLogBoth.Visible:=false;
    end;
-  if pcActions.ActivePageIndex = 2 then
+  if pcActions.ActivePageIndex = GW_PROP_PAGE_CONVERT then
    begin
     btGo.Caption:='Convert';
     pcActions.ActivePage.Height:=20;
@@ -2930,7 +3040,7 @@ begin
     cbReadTplLogOutput.Visible:=false;
     cbReadTplLogBoth.Visible:=false;
    end;
-  if pcActions.ActivePageIndex = 3 then
+  if pcActions.ActivePageIndex = GW_PROP_PAGE_TOOLS then
    begin
     if rbToolsErase.Checked then btGo.Caption:='Erase';
     if rbToolsSeek.Checked then btGo.Caption:='Seek';
@@ -2940,7 +3050,7 @@ begin
     cbReadTplLogOutput.Visible:=false;
     cbReadTplLogBoth.Visible:=false;
    end;
-  if pcActions.ActivePageIndex = 4 then
+  if pcActions.ActivePageIndex = GW_PROP_PAGE_SETTINGS then
    begin
     if rbSetDelays.Checked then btGo.Caption:='Set delays';
     cbReadTplLogParam.Visible:=false;
@@ -2971,8 +3081,13 @@ end;
 
 procedure TForm1.rbSetDelaysClick(Sender: TObject);
 begin
+   if FInClick then Exit;
+   FInClick := true;
+
+   rbSetDelays.Checked:=true;
    rbSetGetPIN.Checked:=false;
    rbSetFirmware.Checked:=false;
+   FInClick := false;
 
    lblSetPINNumber.Enabled:=false;
    cbSetPINnumber.Enabled:=false;
@@ -3008,8 +3123,13 @@ end;
 
 procedure TForm1.rbSetFirmwareClick(Sender: TObject);
 begin
+  if FInClick then Exit;
+  FInClick := true;
+
+  rbSetFirmware.Enabled:=true;
   rbSetDelays.Checked:=false;
   rbSetGetPIN.Checked:=false;
+  FInClick := false;
 
   lblSetPINNumber.Enabled:=false;
   cbSetPINnumber.Enabled:=false;
@@ -3045,8 +3165,15 @@ end;
 
 procedure TForm1.rbSetGetPINClick(Sender: TObject);
 begin
+  if FInClick then Exit;
+  FInClick := true;
+
+  rbSetGetPIN.Checked:=true;
   rbSetDelays.Checked:=false;
   rbSetFirmware.Checked:=false;
+  rbSetGetPIN.Enabled:=true;
+
+  FInClick := false;
 
   lblSetPINNumber.Enabled:=true;
   cbSetPINnumber.Enabled:=true;
@@ -3084,9 +3211,16 @@ end;
 
 procedure TForm1.rbToolsCleanClick(Sender: TObject);
 begin
+  if FInClick then Exit;
+  FInClick := true;
+
   rbToolsErase.Checked:=false;
   rbToolsSeek.Checked:=false;
   rbToolsRPM.Checked:=false;
+  rbToolsClean.Checked:=true;
+  FInClick := false;
+
+  rbToolsClean.Enabled:=true;
 
   lblToolsEraseCyl.Enabled:=false;
   cbToolsEraseCyl.Enabled:=false;
@@ -3116,10 +3250,16 @@ end;
 
 procedure TForm1.rbToolsEraseClick(Sender: TObject);
 begin
+  if FInClick then Exit;
+  FInClick := true;
+
   rbToolsSeek.Checked:=false;
   rbToolsClean.Checked:=false;
   rbToolsRPM.Checked:=false;
+  rbToolsErase.Checked:=true;
+  FInClick := false;
 
+  rbToolsErase.Enabled:=true;
   lblToolsEraseCyl.Enabled:=true;
   cbToolsEraseCyl.Enabled:=true;
   lblToolsEraseFakeIndex.Enabled:=true;
@@ -3169,9 +3309,16 @@ end;
 
 procedure TForm1.rbToolsRPMClick(Sender: TObject);
 begin
+  if FInClick then Exit;
+  FInClick := true;
+
   rbToolsErase.Checked:=false;
   rbToolsSeek.Checked:=false;
   rbToolsClean.Checked:=false;
+  rbToolsRPM.Checked:=true;
+  FInClick := false;
+
+  rbToolsRPM.Enabled:=true;
 
   lblToolsEraseCyl.Enabled:=false;
   cbToolsEraseCyl.Enabled:=false;
@@ -3207,9 +3354,14 @@ end;
 
 procedure TForm1.rbToolsSeekClick(Sender: TObject);
 begin
+
+  if FInClick then Exit;
+  FInClick := true;
   rbToolsErase.Checked:=false;
   rbToolsClean.Checked:=false;
   rbToolsRPM.Checked:=false;
+  rbToolsSeek.Checked:=true;
+  FInClick := false;
 
   lblToolsEraseCyl.Enabled:=false;
   cbToolsEraseCyl.Enabled:=false;
@@ -3476,7 +3628,7 @@ procedure TForm1.edConvFileSourceAcceptFileName(Sender: TObject;
   var Value: String);
 begin
   if cbSrcAsDesDir.Checked then edConvDirDest.Directory:= DirCheck(ExtractfileDir(edConvFileSource.Text));
-  if cbSrcAsDesDir.Checked = false then edConvDirDest.Directory :=INI.ReadString('FluxMyFluffyFloppy', 'LastFolder_Convert_Dest','');
+  if cbSrcAsDesDir.Checked = false then edConvDirDest.Directory :=INI.ReadString(FLUX_INI_NAME, 'LastFolder_Convert_Dest','');
   if cbSrcAsDesFile.Checked then edConvFilename.text:= ExtractFileNameOnly(edConvFileSource.Text);
   if cbSrcAsDesFile.Checked = false then edConvFilename.text:= '';
   if edConvFileSource.Text <> '' then
@@ -3490,7 +3642,7 @@ end;
 procedure TForm1.edConvFileSourceChange(Sender: TObject);
 begin
  if cbSrcAsDesDir.Checked then edConvDirDest.Directory:= DirCheck(ExtractfileDir(edConvFileSource.Text));
- if cbSrcAsDesDir.Checked = false then edConvDirDest.Directory :=INI.ReadString('FluxMyFluffyFloppy', 'LastFolder_Convert_Dest','');
+ if cbSrcAsDesDir.Checked = false then edConvDirDest.Directory :=INI.ReadString(FLUX_INI_NAME, 'LastFolder_Convert_Dest','');
  if cbSrcAsDesFile.Checked then edConvFilename.text:= ExtractFileNameOnly(edConvFileSource.Text);
  if cbSrcAsDesFile.Checked = false then edConvFilename.text:= '';
  if edConvFileSource.Text <> '' then
@@ -3547,6 +3699,7 @@ begin
   cbReadFormatOption.ItemIndex := -1;
   cbReadFormatOption.Enabled:= false;
 
+  //TODO: read from XML file
   if cbReadFormat.Text = 'SCP (SuperCardPro)' then
   begin
    cbReadFormatOption.Items.Clear;
@@ -3686,31 +3839,33 @@ end;
 
 procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
- INI := TINIFile.Create(sAppPath + 'FluxMyFluffyFloppy.ini');
- INI.WriteInteger('FluxMyFluffyFloppy', 'Height', Form1.Height);
- INI.WriteInteger('FluxMyFluffyFloppy', 'Width', Form1.Width);
- INI.WriteBool('FluxMyFluffyFloppy', 'ShowArg', mnuArguments.Checked);
- INI.WriteString('FluxMyFluffyFloppy', 'Greaseweazle', EdGWFile.Text);
- If INI.ReadBool('FluxMyFluffyFloppy', 'SaveBoolGWDevCom', false) = true then
+ INI := TINIFile.Create(sAppPath + GW_INI_FILE);
+ INI.WriteInteger(FLUX_INI_NAME, 'Height', Form1.Height);
+ INI.WriteInteger(FLUX_INI_NAME, 'Width', Form1.Width);
+ INI.WriteBool(FLUX_INI_NAME, 'ShowArg', mnuArguments.Checked);
+ INI.WriteString(FLUX_INI_NAME, 'Greaseweazle', EdGWFile.Text);
+ If INI.ReadBool(FLUX_INI_NAME, 'SaveBoolGWDevCom', false) = true then
   begin
-   INI.WriteString('FluxMyFluffyFloppy', 'SaveGWDevice', cbGWDevCOM.Text);
+   INI.WriteString(FLUX_INI_NAME, 'SaveGWDevice', cbGWDevCOM.Text);
   end
- else INI.WriteString('FluxMyFluffyFloppy', 'SaveGWDevice', '');
- If INI.ReadBool('FluxMyFluffyFloppy', 'SaveBoolGWDrive', false) = true then
+ else INI.WriteString(FLUX_INI_NAME, 'SaveGWDevice', '');
+ If INI.ReadBool(FLUX_INI_NAME, 'SaveBoolGWDrive', false) = true then
   begin
-   INI.WriteString('FluxMyFluffyFloppy', 'SaveGWDrive', cbGWDrive.Text);
+   INI.WriteString(FLUX_INI_NAME, 'SaveGWDrive', cbGWDrive.Text);
   end
- else INI.WriteString('FluxMyFluffyFloppy', 'SaveGWDrive', '');
- INI.WriteString('FluxMyFluffyFloppy', 'GWHW', cbGWHW.Text);
- INI.WriteString('FluxMyFluffyFloppy', 'LastFolder_Read_Dest', edReadDirDest.Directory);
- INI.WriteString('FluxMyFluffyFloppy', 'LastFolder_Write_Source',ExtractFilePath(edWriteFilename.Text));
- INI.WriteString('FluxMyFluffyFloppy', 'LastFolder_Convert_Source',ExtractFilePath(edConvFileSource.Text));
- INI.WriteString('FluxMyFluffyFloppy', 'LastFolder_Convert_Dest',edConvDirDest.Directory);
- INI.WriteBool('FluxMyFluffyFloppy', 'cbSetGlobalActionsTime', cbSetGlobalActionsTime.Checked);
- INI.WriteBool('FluxMyFluffyFloppy', 'cbSetGlobalActionsShellWindow', false);
- INI.WriteBool('FluxMyFluffyFloppy', 'cbSetGlobalActionsBacktrace', cbSetGlobalActionsBacktrace.Checked);
+ else INI.WriteString(FLUX_INI_NAME, 'SaveGWDrive', '');
+ INI.WriteString(FLUX_INI_NAME, 'GWHW', cbGWHW.Text);
+ INI.WriteString(FLUX_INI_NAME, 'LastFolder_Read_Dest', edReadDirDest.Directory);
+ INI.WriteString(FLUX_INI_NAME, 'LastFolder_Write_Source',ExtractFilePath(edWriteFilename.Text));
+ INI.WriteString(FLUX_INI_NAME, 'LastFolder_Convert_Source',ExtractFilePath(edConvFileSource.Text));
+ INI.WriteString(FLUX_INI_NAME, 'LastFolder_Convert_Dest',edConvDirDest.Directory);
+ INI.WriteBool(FLUX_INI_NAME, 'cbSetGlobalActionsTime', cbSetGlobalActionsTime.Checked);
+ INI.WriteBool(FLUX_INI_NAME, 'cbSetGlobalActionsShellWindow', false);
+ INI.WriteBool(FLUX_INI_NAME, 'cbSetGlobalActionsBacktrace', cbSetGlobalActionsBacktrace.Checked);
  INI.Free;
 end;
+
+
 
 procedure TForm1.FormResize(Sender: TObject);
 const
@@ -3733,7 +3888,7 @@ var
 begin
 
   // Read
-  if pcActions.ActivePageIndex = 0 then
+  if pcActions.ActivePageIndex = GW_PROP_PAGE_READ then
    begin
      if edReadFilename.Text = '' then
      begin
@@ -3927,7 +4082,7 @@ begin
  end;
 
   // Convert ####################################################################
-    if pcActions.ActivePageIndex = 2 then
+    if pcActions.ActivePageIndex = GW_PROP_PAGE_CONVERT then
      begin
        if edConvFilename.Text = '' then
        begin
@@ -4119,7 +4274,10 @@ begin
 end;
 procedure TForm1.CMD_Generate;
 var
-  cmd : String;
+  cmd : String = '';
+  param : String = '';
+  specifyDevice : boolean = false;
+  specifyDrive : boolean = false;
 begin
  edGWCMD.Lines.Clear;
 
@@ -4141,35 +4299,24 @@ begin
     end;
   end;
 
- // Generate the full cmdline
- cmd := '';
- // GW
- cmd := cmd + '"' + edGWFile.Text + '"';
-
+ // Generate the cmdline parameters
  if cbSetGlobalActionsBacktrace.Checked = true then cmd := cmd + ' --bt';
  if cbSetGlobalActionsTime.Checked = true then cmd := cmd + ' --time';
 
  // Read options
- if pCActions.ActivePageIndex = 0 then
+ if pCActions.ActivePageIndex = GW_PROP_PAGE_READ then
   begin
-  cmd := cmd + ' read';
-  if cbGWDevCOM.Text <> '' then
-   begin
-     if cbGWHW.Text = 'Greaseweazle' then cmd := cmd + ' --device=' + cbGWDevCOM.Text;
-     if cbGWHW.Text = 'Adafruit RP2040' then cmd := cmd + ' --device ' + cbGWDevCOM.Text;
-   end;
-  if cbGWDrive.Text <> '' then
-   begin
-     cmd := cmd + ' --drive=' + cbGWDrive.Text;
-   end;
+  cmd := 'read';
+  specifyDevice := true;
+  specifyDrive := true;
   if cbReadTplFormatSrc.Text <> 'Internal' then
    begin
-   cmd := cmd + ' --diskdefs "' + dd + '"';
-   if cbReadTplFormat.Text <> '' then cmd := cmd + ' --format ' + cbReadTplFormat.Text;
+   param := param + ' --diskdefs "' + dd + '"';
+   if cbReadTplFormat.Text <> '' then param := param + ' --format ' + cbReadTplFormat.Text;
    end;
   if cbReadTplFormatSrc.Text = 'Internal' then
    begin
-    if cbReadTplFormat.Text <> '' then cmd := cmd + ' --format ' + cbReadTplFormat.Text;
+    if cbReadTplFormat.Text <> '' then param := param + ' --format ' + cbReadTplFormat.Text;
    end;
 
   // Use all arguments ?
@@ -4181,7 +4328,7 @@ begin
       cbReadTplSteps.Enabled := true;
       cbReadTplHSwap.Enabled := true;
       cbReadTplFlippy.Enabled := true;
-      cmd := cmd + Trackset(' --tracks=',cbReadTplCyls.Text,cbReadTplHeads.Text,cbReadTplSteps.Text,cbReadTplHSwap.Checked,cbReadTplFlippy.Text);
+      param := param + Trackset(' --tracks=',cbReadTplCyls.Text,cbReadTplHeads.Text,cbReadTplSteps.Text,cbReadTplHSwap.Checked,cbReadTplFlippy.Text);
       if cbReadTplFlippy.Text <> '' then
        begin
         cbReadTplFlippyReverse.Enabled := true;
@@ -4200,68 +4347,62 @@ begin
      end;
     if cbReadTplRevs.Text <> '' then
      begin
-      cmd := cmd + ' --revs=' + cbReadTplRevs.Text;
+      param := param + ' --revs=' + cbReadTplRevs.Text;
      end;
     if cbReadTplRaw.Checked = true then
      begin
-      cmd := cmd + ' --raw ';
+      param := param + ' --raw ';
      end;
     if cbReadTplFakeIndex.Text <> '' then
      begin
-      cmd := cmd + ' --fake-index=' + cbReadTplFakeIndex.Text;
+      param := param + ' --fake-index=' + cbReadTplFakeIndex.Text;
      end;
     if cbReadTplHardSec.Checked = true then
      begin
-      cmd := cmd + ' --hard-sectors ';
+      param := param + ' --hard-sectors ';
      end;
     if cbReadTplAdjustSpeed.Text <> '' then
      begin
-      cmd := cmd + ' --adjust-speed=' + cbReadTplAdjustSpeed.Text ;
+      param := param + ' --adjust-speed=' + cbReadTplAdjustSpeed.Text ;
      end;
     if cbReadTplRetries.Text <> '' then
      begin
-      cmd := cmd + ' --retries=' + cbReadTplRetries.Text;
+      param := param + ' --retries=' + cbReadTplRetries.Text;
      end;
     if cbReadTplSeekRetries.Text <> '' then
      begin
-      cmd := cmd + ' --seek-retries=' + cbReadTplSeekRetries.Text;
+      param := param + ' --seek-retries=' + cbReadTplSeekRetries.Text;
      end;
     if cbReadNoOverwrite.Checked = true then
      begin
-      cmd := cmd + ' -n ';
+      param := param + ' -n ';
      end;
     if cbReadTplPLL.Text <> '' then
      begin
-      cmd := cmd + ' --pll ' + cbReadTplPLL.Text;
+      param := param + ' --pll ' + cbReadTplPLL.Text;
      end;
     if cbReadTplDD.Text <> '' then
      begin
-      cmd := cmd + ' --densel ' + cbReadTplDD.Text;
+      param := param + ' --densel ' + cbReadTplDD.Text;
      end;
    end;
-   if cbReadPreview.text <> '' then cmd := cmd + ' "' + Dircheck(edReadDirDest.Text) + cbReadPreview.text + '"';
+   if cbReadPreview.text <> '' then param := param + ' "' + Dircheck(edReadDirDest.Text) + cbReadPreview.text + '"';
  end;
 
  // Write options
-  if pcActions.ActivePageIndex = 1 then
+  if pcActions.ActivePageIndex = GW_PROP_PAGE_WRITE then
    begin
-    cmd := cmd + ' write';
-    if cbGWDevCOM.Text <> '' then
-     begin
-       cmd := cmd + ' --device=' + cbGWDevCOM.Text;
-     end;
-    if cbGWDrive.Text <> '' then
-     begin
-       cmd := cmd + ' --drive=' + cbGWDrive.Text;
-     end;
+    cmd := 'write';
+    specifyDevice := true;
+    specifyDrive := true;
     if cbWriteTplFormatSrc.Text <> 'Internal' then
      begin
-      cmd := cmd + ' --diskdefs "' + dd + '"';
-      if cbWriteTplFormat.Text <> '' then cmd := cmd + ' --format ' + cbWriteTplFormat.Text;
+      param := param + ' --diskdefs "' + dd + '"';
+      if cbWriteTplFormat.Text <> '' then param := param + ' --format ' + cbWriteTplFormat.Text;
      end;
     if cbWriteTplFormatSrc.Text = 'Internal' then
      begin
-      if cbWriteTplFormat.Text <> '' then cmd := cmd + ' --format ' + cbWriteTplFormat.Text;
+      if cbWriteTplFormat.Text <> '' then param := param + ' --format ' + cbWriteTplFormat.Text;
      end;
 
    // Use all arguments ?
@@ -4273,11 +4414,11 @@ begin
         cbWriteTplSteps.Enabled := true;
         cbWriteTplHSwap.Enabled := true;
         cbWriteTplFlippy.Enabled := true;
-        cmd := cmd + Trackset(' --tracks=',cbWriteTplCyls.Text,cbWriteTplHeads.Text,cbWriteTplSteps.Text,cbWriteTplHSwap.Checked,cbWriteTplFlippy.Text);
+        param := param + Trackset(' --tracks=',cbWriteTplCyls.Text,cbWriteTplHeads.Text,cbWriteTplSteps.Text,cbWriteTplHSwap.Checked,cbWriteTplFlippy.Text);
         if cbWriteTplFlippy.Text <> '' then
          begin
           cbWriteTplFlippyReverse.Enabled := true;
-          if cbWriteTplFlippyReverse.Checked = true then cmd := cmd + ' --reverse';
+          if cbWriteTplFlippyReverse.Checked = true then param := param + ' --reverse';
          end
         else
          cbWriteTplFlippyReverse.Enabled := false;
@@ -4292,62 +4433,62 @@ begin
        end;
       if cbWriteTplPreErase.Checked = true then
        begin
-        cmd := cmd + ' --pre-erase ';
+        param := param + ' --pre-erase ';
        end;
       if cbWriteTplEraseEmpty.Checked = true then
        begin
-        cmd := cmd + ' --erase-empty ';
+        param := param + ' --erase-empty ';
        end;
       if cbWriteTplFakeIndex.Text <> '' then
        begin
-        cmd := cmd + ' --fake-index=' + cbWriteTplFakeIndex.Text;
+        param := param + ' --fake-index=' + cbWriteTplFakeIndex.Text;
        end;
       if cbWriteTplHardSec.Checked = true then
        begin
-        cmd := cmd + ' --hard-sectors ';
+        param := param + ' --hard-sectors ';
        end;
       if cbWriteTplNoVerify.Checked = true then
        begin
-        cmd := cmd + ' --no-verify ';
+        param := param + ' --no-verify ';
        end;
       if cbWriteTplRetries.Text <> '' then
        begin
-        cmd := cmd + ' --retries=' + cbWriteTplRetries.Text;
+        param := param + ' --retries=' + cbWriteTplRetries.Text;
        end;
       if cbWriteTplPrecomp.Text <> '' then
        begin
-        cmd := cmd + ' --precomp=' + cbWriteTplPrecomp.Text;
+        param := param + ' --precomp=' + cbWriteTplPrecomp.Text;
        end;
       if cbWriteTplDensel.Text <> '' then
        begin
-        cmd := cmd + ' --densel ' + cbWriteTplDensel.Text;
+        param := param + ' --densel ' + cbWriteTplDensel.Text;
        end;
       if cbWriteTplTplTP43Pin2.Checked then
        begin
-        cmd := cmd + ' --gen-tg43';
+        param := param + ' --gen-tg43';
        end;
     end;
     btGo.Default:=false;
     if edWriteFileName.Text <> '' then
      begin
-      cmd := cmd + ' "' + edWriteFileName.Text + '"';
+      param := param + ' "' + edWriteFileName.Text + '"';
       btGo.Default:=true;
      end;
    end;
 
 
   // Convert options
-   if pcActions.ActivePageIndex = 2 then
+   if pcActions.ActivePageIndex = GW_PROP_PAGE_CONVERT then
     begin
-     cmd := cmd + ' convert';
+     cmd := 'convert';
      if cbConvDiskdefs.Text <> 'Internal' then
       begin
-       cmd := cmd + ' --diskdefs "' + dd +'"';
-       if cbConvFormat.Text <> '' then cmd := cmd + ' --format ' + cbConvFormat.Text
+       param := param + ' --diskdefs "' + dd +'"';
+       if cbConvFormat.Text <> '' then param := param + ' --format ' + cbConvFormat.Text
       end;
      if cbConvDiskdefs.Text = 'Internal' then
       begin
-       if cbConvFormat.Text <> '' then cmd := cmd + ' --format ' + cbConvFormat.Text;
+       if cbConvFormat.Text <> '' then param := param + ' --format ' + cbConvFormat.Text;
       end;
 
     // Use all arguments ?
@@ -4355,78 +4496,72 @@ begin
      begin
        if cbConvTracksetCyls.Text <> '' then
         begin
-          cmd := cmd + Trackset(' --tracks=',cbConvTracksetCyls.Text,cbConvTracksetHeads.Text,cbConvTracksetSteps.Text,cbConvTracksetHSwap.Checked,cbConvTracksetFlippy.Text);
+          param := param + Trackset(' --tracks=',cbConvTracksetCyls.Text,cbConvTracksetHeads.Text,cbConvTracksetSteps.Text,cbConvTracksetHSwap.Checked,cbConvTracksetFlippy.Text);
         end;
        if cbConvOutTracksetCyls.Text <> '' then
         begin
-         cmd := cmd + Trackset(' --out-tracks=',cbConvOutTracksetCyls.Text,cbConvOutTracksetHeads.Text,cbConvOutTracksetSteps.Text,cbConvOutTracksetHSwap.Checked,cbConvOutTracksetFlippy.Text);
+         param := param + Trackset(' --out-tracks=',cbConvOutTracksetCyls.Text,cbConvOutTracksetHeads.Text,cbConvOutTracksetSteps.Text,cbConvOutTracksetHSwap.Checked,cbConvOutTracksetFlippy.Text);
          if cbConvOutTracksetFlippy.Text <> '' then
           begin
            cbConvTplFlippyReverse.Enabled := true;
-           if cbConvTplFlippyReverse.Checked = true then cmd := cmd + ' --reverse';
+           if cbConvTplFlippyReverse.Checked = true then param := param + ' --reverse';
           end
          else
           cbConvTplFlippyReverse.Enabled := false;
         end;
        if cbConvAdjustSpeed.Text <> '' then
         begin
-         cmd := cmd + ' --adjust-speed=' + cbConvAdjustSpeed.Text;
+         param := param + ' --adjust-speed=' + cbConvAdjustSpeed.Text;
         end;
        if cbConvNoOverwrite.Checked = true then
         begin
-         cmd := cmd + ' -n';
+         param := param + ' -n';
         end;
       if cbConvPLL.Text <> '' then
        begin
-        cmd := cmd + ' --pll ' + cbConvPLL.Text;
+        param := param + ' --pll ' + cbConvPLL.Text;
        end;
       if cbConvIndexMarks.Text <> '' then
        begin
-        cmd := cmd + ' ' + cbConvIndexMarks.Text;
+        param := param + ' ' + cbConvIndexMarks.Text;
        end;
       if edConvFileSource.Text <> '' then
        begin
-        cmd := cmd + ' "' + edConvFileSource.Text + '"';
+        param := param + ' "' + edConvFileSource.Text + '"';
        end;
     end;
     if edConvFileName.text <> '' then
      begin
       if cbSrcAsDesDir.Checked then edConvDirDest.Directory:= DirCheck(ExtractfileDir(edConvFileSource.Text));
-      cmd := cmd + ' "' + Dircheck(edConvDirDest.Text) + edConvFilenamePreview.text + '"';
+      param := param + ' "' + Dircheck(edConvDirDest.Text) + edConvFilenamePreview.text + '"';
      end;
    end;
 
    // Tools options
-    if pcActions.ActivePageIndex = 3 then
+    if pcActions.ActivePageIndex = GW_PROP_PAGE_TOOLS then
      begin
      // Erase
       if rbToolsErase.Checked then
        begin
         btGo.Caption:='Erase';
-        cmd := cmd + ' erase';
-        if cbGWDevCOM.Text <> '' then
-         begin
-          cmd := cmd + ' --device=' + cbGWDevCOM.Text;
-         end;
-        if cbGWDrive.Text <> '' then
-         begin
-          cmd := cmd + ' --drive=' + cbGWDrive.Text;
-         end;
+        cmd := 'erase';
+        specifyDevice := true;
+        specifyDrive := true;
         if cbToolsEraseRevs.Text <> '' then
          begin
-          cmd := cmd + ' --revs=' + cbToolsEraseRevs.Text;
+          param := param + ' --revs=' + cbToolsEraseRevs.Text;
          end;
          if cbToolsEraseCyl.Text <> '' then
           begin
-           cmd := cmd + Trackset(' --tracks=',cbToolsEraseCyl.Text,cbToolsEraseHeads.Text,cbToolsEraseSteps.Text,cbToolsEraseHSwap.Checked,cbToolsEraseFlippy.Text);
+           param := param + Trackset(' --tracks=',cbToolsEraseCyl.Text,cbToolsEraseHeads.Text,cbToolsEraseSteps.Text,cbToolsEraseHSwap.Checked,cbToolsEraseFlippy.Text);
           end;
         if lblToolsEraseHFreq.Checked = true then
          begin
-          cmd := cmd + ' --hfreq';
+          param := param + ' --hfreq';
          end;
         if cbToolsEraseFakeIndex.Text <> '' then
          begin
-          cmd := cmd + ' --fake-index=' + cbToolsEraseFakeIndex.Text;
+          param := param + ' --fake-index=' + cbToolsEraseFakeIndex.Text;
          end;
        end;
 
@@ -4434,154 +4569,192 @@ begin
       if rbToolsSeek.Checked then
        begin
         btGo.Caption:='Seek';
-        cmd := cmd + ' seek';
-        if cbGWDevCOM.Text <> '' then
-         begin
-          cmd := cmd + ' --device=' + cbGWDevCOM.Text;
-         end;
-        if cbGWDrive.Text <> '' then
-         begin
-          cmd := cmd + ' --drive=' + cbGWDrive.Text;
-         end;
-         if cbToolsSeekTrackForce.Checked then cmd := cmd + ' --force';
-         if cbToolsSeekMotorOn.Checked then cmd := cmd + ' --motor-on';
-         cmd := cmd + ' ' + cbToolsSeekTrack.Text;
+        cmd := 'seek';
+        specifyDevice := true;
+        specifyDrive := true;
+         if cbToolsSeekTrackForce.Checked then param := param + ' --force';
+         if cbToolsSeekMotorOn.Checked then param := param + ' --motor-on';
+         param := param + ' ' + cbToolsSeekTrack.Text;
        end;
       // Clean
       if rbToolsClean.Checked then
        begin
         btGo.Caption:='Clean';
-        cmd := cmd + ' clean';
-        if cbGWDevCOM.Text <> '' then
-         begin
-          cmd := cmd + ' --device=' + cbGWDevCOM.Text;
-         end;
-        if cbGWDrive.Text <> '' then
-         begin
-          cmd := cmd + ' --drive=' + cbGWDrive.Text;
-         end;
-        cmd := cmd + ' --cyls=' + cbToolsCleanCyl.Text;
-        cmd := cmd + ' --linger=' + cbToolsCleanLinger.Text;
-        cmd := cmd + ' --passes=' + cbToolsCleanPasses.Text;
+        cmd := 'clean';
+        specifyDevice := true;
+        specifyDrive := true;
+        param := param + ' --cyls=' + cbToolsCleanCyl.Text;
+        param := param + ' --linger=' + cbToolsCleanLinger.Text;
+        param := param + ' --passes=' + cbToolsCleanPasses.Text;
        end;
       // RPM
       if rbToolsRPM.Checked then
        begin
         btGo.Caption:='RPM';
-        cmd := cmd + ' rpm';
-        if cbGWDevCOM.Text <> '' then
-         begin
-          cmd := cmd + ' --device=' + cbGWDevCOM.Text;
-         end;
-        if cbGWDrive.Text <> '' then
-         begin
-          cmd := cmd + ' --drive=' + cbGWDrive.Text;
-         end;
-        cmd := cmd + ' --nr=' + cbToolsRPMNumbIter.Text;
+        cmd := ' rpm';
+        specifyDevice := true;
+        specifyDrive := true;
+        param := param + ' --nr=' + cbToolsRPMNumbIter.Text;
        end;
     end;
 
     // Settings
-    if pcActions.ActivePageIndex = 4 then
+    if pcActions.ActivePageIndex = GW_PROP_PAGE_SETTINGS then
      begin
      if rbSetDelays.Checked = true then
       begin
-      cmd := cmd + ' delays';
-       if cbGWDevCOM.Text <> '' then
-        begin
-         cmd := cmd + ' --device=' + cbGWDevCOM.Text;
-        end;
+      cmd := 'delays';
+      specifyDevice := true;
       if cbSetDelaySelect.Text <>'' then
-        cmd := cmd + ' --select ' + cbSetDelaySelect.Text;
+        param := param + ' --select ' + cbSetDelaySelect.Text;
       if cbSetDelayStep.Text <>'' then
-        cmd := cmd + ' --step ' + cbSetDelayStep.Text;
+        param := param + ' --step ' + cbSetDelayStep.Text;
       if cbSetDelaySettle.Text <>'' then
-        cmd := cmd + ' --settle ' + cbSetDelaySettle.Text;
+        param := param + ' --settle ' + cbSetDelaySettle.Text;
       if cbSetDelayMotor.Text <>'' then
-        cmd := cmd + ' --motor ' + cbSetDelayMotor.Text;
+        param := param + ' --motor ' + cbSetDelayMotor.Text;
       if cbSetDelayAutoOff.Text <>'' then
-        cmd := cmd + ' --watchdog ' + cbSetDelayAutoOff.Text;
+        param := param + ' --watchdog ' + cbSetDelayAutoOff.Text;
       if cbSetDelayPreWrite.Text <>'' then
-        cmd := cmd + ' --pre-write ' + cbSetDelayPreWrite.Text;
+        param := param + ' --pre-write ' + cbSetDelayPreWrite.Text;
       if cbSetDelayPostWrite.Text <>'' then
-        cmd := cmd + ' --post-write ' + cbSetDelayPostWrite.Text;
+        param := param + ' --post-write ' + cbSetDelayPostWrite.Text;
       if cbSetDelayIndexMask.Text <>'' then
-        cmd := cmd + ' --index-mask ' + cbSetDelayIndexMask.Text;
+        param := param + ' --index-mask ' + cbSetDelayIndexMask.Text;
       end;
 
      if rbSetGetPIN.Checked = true then
       begin
+       specifyDevice := true;
        // H = true, L = false
        if rbGetPIN.Checked = true then
         begin
-           cmd := cmd + ' pin get';
+           cmd := 'pin get';
            cbSetPINLevel.Text:='';
            cbSetPINLevel.Enabled:=false;
         end;
        if rbSetPIN.Checked = true then
         begin
-           cmd := cmd + ' pin set';
+           cmd := 'pin set';
            cbSetPINLevel.Enabled:=true;
         end;
-        if cbGWDevCOM.Text <> '' then
-         begin
-          cmd := cmd + ' --device=' + cbGWDevCOM.Text;
-         end;
-        if cbGWDrive.Text <> '' then
-         begin
-          cmd := cmd + ' --drive=' + cbGWDrive.Text;
-         end;
        if cbSetPINNumber.Text <>'' then
-         cmd := cmd + ' ' + cbSetPINNumber.Text;
+        begin
+         param := param + ' ' + cbSetPINNumber.Text;
+        end;
        if cbSetPINLevel.Text <>'' then
        begin
-         if cbSetPINLevel.Text = 'Low (0v)' then cmd := cmd + ' L';
-         if cbSetPINLevel.Text = 'High (5v)' then cmd := cmd + ' H';
+         if cbSetPINLevel.Text = 'Low (0v)' then param := param + ' L';
+         if cbSetPINLevel.Text = 'High (5v)' then param := param + ' H';
        end;
     end;
 
     if rbSetFirmware.Checked = true then
      begin
-      cmd := cmd + ' update';
-      if cbGWDevCOM.Text <> '' then
-       begin
-        cmd := cmd + ' --device=' + cbGWDevCOM.Text;
-       end;
+      cmd := 'update';
+      specifyDevice := true;
       if cbSetFirmwareBootloader.Checked  = true then
        begin
-        cmd := cmd + ' --bootloader';
+        param := param + ' --bootloader';
        end;
       if opSetFWFile.Checked = true then
        begin
-        cmd := cmd + ' --force "' + edToolsFW.Text + '"';
+        param := param + ' --force "' + edToolsFW.Text + '"';
        end;
       if opSetFWTag.Checked = true then
        begin
-        cmd := cmd + ' --tag "' + edToolsFWtag.Text + '"';
+        param := param + ' --tag "' + edToolsFWtag.Text + '"';
        end;
      end;
     end;
 
+  // Execute GW with cmd, param and where applicable device/drive
+  performCmdAction(cmd, param, specifyDevice, specifyDrive);
+
+end;
+
+// Other commands are in the Command Line window with parameters
+procedure TForm1.performCmdAction(const cmd: string;
+                                  const param: string;
+                                  const specifyDevice: boolean;
+                                  const specifyDrive: boolean);
+var
+  execCmdLine : String;
+begin
+
+ // Get executable
+ execCmdLine := '"' + edGWFile.Text + '"';
+
+  // Append specific user parameters
+ execCmdLine := execCmdLine + ' ' + cmd + ' '  + param;
+
+ // Append device and drive fields from form
+ if (cbGWDevCOM.Text <> '') and (specifyDevice) then
+ begin
+   // Adafruit doesn't use equals
+   if cbGWHW.Text = 'Adafruit RP2040' then
+     begin
+       execCmdLine := execCmdLine + ' --device ' + cbGWDevCOM.Text;
+     end
+   else
+     begin
+       execCmdLine := execCmdLine + ' --device=' + cbGWDevCOM.Text;
+     end
+ end;
+ if (cbGWDrive.Text <> '') and (specifyDrive) then
+ begin
+   execCmdLine := execCmdLine + ' --drive=' + cbGWDrive.Text;
+ end;
+
+
  edGWCMD.SelStart := edGWCMD.GetTextLen;
  edGWCMD.SelLength := 0;
- edGWCMD.SelText := cmd;
+ edGWCMD.SelText := execCmdLine;
 
+end;
+
+// Modal commands only have a single GW command with no parameters
+procedure TForm1.performModalCmdAction(const command: string);
+begin
+  if cbGWDevCOM.Text <> '' then
+  begin
+    if fileexists(edGWFile.Text) = true then
+      begin
+        aLine := '"' + edGWFile.Text + '" ' + command + ' --device ' + cbGWDevCOM.Text;
+        frmGW.Caption:= GW_APP_NAME + ' - ' + aLine;
+        frmGW.showmodal;
+      end
+    else
+      begin
+        MessageDlg('Invalid filename or file (' + GW_APP + ') not found!',mtWarning, [mbOK], 0);
+      end;
+  end
+  else
+    begin
+      MessageDlg('Greaseweazle port not selected!', mtWarning, [mbOK], 0);
+    end;
 end;
 
 procedure CmdDir(aGW: string; aParam: string);
 var
-  Process: TProcess;
+  Proc: TProcess;
 begin
-  Process := TProcess.Create(nil);
+  Proc := TProcess.Create(nil);
   try
-    Process.Executable := 'cmd';
-    Process.Parameters.Add(aGW);
-    Process.Parameters.Add(aParam);
-    Process.ShowWindow := swoShow;
-    Process.Options := Process.Options + [poWaitOnExit];
-    Process.Execute;
+  {$IFDEF WINDOWS}
+    Proc.Executable := 'cmd.exe';
+    Proc.Parameters.Add(aGW);
+    Proc.Parameters.Add(aParam);
+    Proc.ShowWindow := swoShow;
+  {$ELSE}
+    Proc.Executable := '/bin/bash';
+    Proc.Parameters.Add('-c');
+    Proc.Parameters.Add(aGW + ' ' + aParam);
+  {$ENDIF}
+    Proc.Options := [poWaitOnExit];
+    Proc.Execute;
   finally
-    Process.Free;
+    Proc.Free;
   end;
 end;
 
