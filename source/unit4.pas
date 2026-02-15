@@ -41,12 +41,14 @@ type
     StrGrid_s1: TStringGrid;
     procedure Button1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure procAddLine(HeightScr: integer);
     procedure procInitScreen(const grilla: TtsGrid; fIni, fFin: integer);
     procedure procRefreshLine(const grilla: TtsGrid; fIni, HeightScr: integer);
     procedure procRefreshLines(const grilla: TtsGrid; fIni, fFin,HeightScr: integer);
     procedure StrGrid_Fill(aLine : String);
+    procedure SplitCommandLine(const CmdLine: string; out ExecPath, Params: string);
   private
 
   public
@@ -75,24 +77,81 @@ begin
  proc.Destroy;
 end;
 
-procedure TfrmGW.FormShow(Sender: TObject);
+// Resolve issues with larger DPI screen
+procedure TfrmGW.FormCreate(Sender: TObject);
 begin
- if INI.ReadBool('FluxMyFluffyFloppy', 'CodepageCMD', false) = true then
-  begin
-   //aLine := ConvertEncoding(aLine, 'utf8', 'cp850');
-   aLine := ConvertEncoding(aLine, 'utf8', GetConsoleTextEncoding);
-  end;
-  proc:= TConsoleProc.Create(nil);
-  proc.OnInitScreen :=@procInitScreen;
-  proc.OnRefreshLine:=@procRefreshLine;
-  proc.OnRefreshLines:=@procRefreshLines;
-  proc.OnAddLine:=@procAddLine;
+{$IFDEF WINDOWS}
+{$ELSE}
+  DisableAutoSizing;
+  PixelsPerInch := 96;
+  EnableAutoSizing;
+{$ENDIF}
+end;
+
+procedure TfrmGW.FormShow(Sender: TObject);
+var
+  ExecPath, Params: string;
+begin
+  if INI.ReadBool('FluxMyFluffyFloppy', 'CodepageCMD', false) then
+    aLine := ConvertEncoding(aLine, 'utf8', GetConsoleTextEncoding);
+
+  proc := TConsoleProc.Create(nil);
+  proc.OnInitScreen    := @procInitScreen;
+  proc.OnRefreshLine   := @procRefreshLine;
+  proc.OnRefreshLines  := @procRefreshLines;
+  proc.OnAddLine       := @procAddLine;
+
   Memo1.Lines.Clear;
   StrGrid_s0.Clean;
   StrGrid_s1.Clean;
-  proc.Open('CMD','');
-  proc.SendLn(aLine);
+
+  {$IFDEF WINDOWS}
+    // Windows keeps original behavior
+    proc.Open('CMD', '');
+    proc.SendLn(aLine);
+  {$ELSE}
+    // Linux: split exec + params correctly
+    SplitCommandLine(aLine, ExecPath, Params);
+    proc.Open(ExecPath, Params);
+  {$ENDIF}
 end;
+
+
+
+procedure TfrmGW.SplitCommandLine(const CmdLine: string; out ExecPath, Params: string);
+var
+  s: string;
+  p: Integer;
+begin
+  s := Trim(CmdLine);
+
+  if (s <> '') and (s[1] = '"') then
+  begin
+    // quoted executable
+    p := Pos('"', s, 2);
+    if p = 0 then
+      raise Exception.Create('Malformed command line');
+
+    ExecPath := Copy(s, 2, p - 2);        // strip quotes ONLY here
+    Params   := Trim(Copy(s, p + 1, MaxInt)); // params untouched
+  end
+  else
+  begin
+    // unquoted executable
+    p := Pos(' ', s);
+    if p > 0 then
+    begin
+      ExecPath := Copy(s, 1, p - 1);
+      Params   := Trim(Copy(s, p + 1, MaxInt));
+    end
+    else
+    begin
+      ExecPath := s;
+      Params   := '';
+    end;
+  end;
+end;
+
 
 procedure TfrmGW.procAddLine(HeightScr: integer);
 begin

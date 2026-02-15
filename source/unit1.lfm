@@ -11,6 +11,7 @@ object Form1: TForm1
   Position = poScreenCenter
   LCLVersion = '4.4.0.0'
   OnClose = FormClose
+  OnCreate = FormCreate
   OnResize = FormResize
   OnShow = FormShow
   object pnCmd: TPanel
@@ -118,7 +119,6 @@ object Form1: TForm1
         Top = 0
         Width = 84
         Caption = 'Location:'
-        ParentColor = False
       end
       object EdGWFile: TFileNameEdit
         Left = 175
@@ -143,7 +143,6 @@ object Form1: TForm1
         Top = 49
         Width = 122
         Caption = 'Device/COM:'
-        ParentColor = False
       end
       object cbGWDevCOM: TComboBox
         Left = 175
@@ -163,7 +162,6 @@ object Form1: TForm1
         Top = 49
         Width = 53
         Caption = 'Drive:'
-        ParentColor = False
       end
       object cbGWDrive: TComboBox
         Left = 588
@@ -228,6 +226,9 @@ object Form1: TForm1
         OnClick = btGWInfoClick
       end
       object btGWBandwidth: TButton
+        AnchorSideLeft.Control = btGWRefreshUSB
+        AnchorSideRight.Control = btGWRefreshUSB
+        AnchorSideRight.Side = asrBottom
         Left = 1531
         Height = 44
         Hint = 'Bandwitdh'
@@ -246,7 +247,6 @@ object Form1: TForm1
         Top = 49
         Width = 94
         Caption = 'Hardware:'
-        ParentColor = False
       end
       object cbGWHW: TComboBox
         Left = 854
@@ -274,7 +274,7 @@ object Form1: TForm1
         Hint = 'Refresh COM ports'
         Top = 49
         Width = 33
-        Caption = '?'
+        Caption = 'Refresh'
         ParentShowHint = False
         ShowHint = True
         TabOrder = 3
@@ -350,7 +350,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 61
                 Caption = 'Name:'
-                ParentColor = False
               end
               object cbReadTplName: TComboBox
                 Left = 158
@@ -369,7 +368,6 @@ object Form1: TForm1
                 Top = 46
                 Width = 110
                 Caption = 'Description:'
-                ParentColor = False
               end
               object edReadTplDesc: TEdit
                 Left = 158
@@ -452,7 +450,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 47
                 Caption = 'Revs:'
-                ParentColor = False
               end
               object cbReadTplRevs: TComboBox
                 Left = 158
@@ -486,7 +483,6 @@ object Form1: TForm1
                 Top = 46
                 Width = 44
                 Caption = 'Raw:'
-                ParentColor = False
               end
               object cbReadTplRaw: TCheckBox
                 Left = 158
@@ -505,7 +501,6 @@ object Form1: TForm1
                 Top = 89
                 Width = 105
                 Caption = 'Fake-Index:'
-                ParentColor = False
               end
               object cbReadTplFakeIndex: TComboBox
                 Left = 158
@@ -531,7 +526,6 @@ object Form1: TForm1
                 Top = 135
                 Width = 123
                 Caption = 'Hard-sectors:'
-                ParentColor = False
               end
               object cbReadTplHardSec: TCheckBox
                 Left = 158
@@ -550,7 +544,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 129
                 Caption = 'Adjust-Speed:'
-                ParentColor = False
               end
               object cbReadTplAdjustSpeed: TComboBox
                 Left = 779
@@ -576,7 +569,6 @@ object Form1: TForm1
                 Top = 46
                 Width = 67
                 Caption = 'Retries:'
-                ParentColor = False
               end
               object cbReadTplRetries: TComboBox
                 Left = 779
@@ -611,7 +603,6 @@ object Form1: TForm1
                 Top = 89
                 Width = 118
                 Caption = 'Seek-Retries:'
-                ParentColor = False
               end
               object cbReadTplSeekRetries: TComboBox
                 Left = 779
@@ -645,7 +636,6 @@ object Form1: TForm1
                 Top = 135
                 Width = 37
                 Caption = 'PLL:'
-                ParentColor = False
               end
               object cbReadTplPLL: TComboBox
                 Left = 779
@@ -670,7 +660,6 @@ object Form1: TForm1
                 Top = 178
                 Width = 68
                 Caption = 'Densel:'
-                ParentColor = False
               end
               object cbReadTplDD: TComboBox
                 Left = 779
@@ -696,7 +685,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 89
                 Caption = 'Cylinders:'
-                ParentColor = False
               end
               object cbReadTplCyls: TComboBox
                 Left = 1312
@@ -727,7 +715,6 @@ object Form1: TForm1
                 Top = 46
                 Width = 63
                 Caption = 'Heads:'
-                ParentColor = False
               end
               object cbReadTplHeads: TComboBox
                 Left = 1312
@@ -752,7 +739,6 @@ object Form1: TForm1
                 Top = 89
                 Width = 54
                 Caption = 'Steps:'
-                ParentColor = False
               end
               object cbReadTplSteps: TComboBox
                 Left = 1312
@@ -779,7 +765,6 @@ object Form1: TForm1
                 Top = 135
                 Width = 69
                 Caption = 'HSwap:'
-                ParentColor = False
               end
               object cbReadTplHSwap: TCheckBox
                 Left = 1312
@@ -797,7 +782,6 @@ object Form1: TForm1
                 Top = 178
                 Width = 59
                 Caption = 'Flippy:'
-                ParentColor = False
               end
               object cbReadTplFlippy: TComboBox
                 Left = 1312
@@ -820,7 +804,6 @@ object Form1: TForm1
                 Top = 224
                 Width = 76
                 Caption = 'Reverse:'
-                ParentColor = False
               end
               object cbReadTplFlippyReverse: TCheckBox
                 Left = 1312
@@ -853,7 +836,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 123
                 Caption = 'Format spec.:'
-                ParentColor = False
               end
               object cbReadTplFormatSrc: TComboBox
                 Left = 158
@@ -912,7 +894,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 89
                 Caption = 'Directory:'
-                ParentColor = False
               end
               object edReadDirDest: TDirectoryEdit
                 Left = 158
@@ -946,7 +927,6 @@ object Form1: TForm1
                 Top = 46
                 Width = 88
                 Caption = 'Filename:'
-                ParentColor = False
               end
               object EdReadFilename: TEdit
                 Left = 158
@@ -978,7 +958,6 @@ object Form1: TForm1
                 Top = 89
                 Width = 80
                 Caption = 'Disk-Nr.:'
-                ParentColor = False
               end
               object edReadDisk1: TSpinEdit
                 Left = 158
@@ -1017,7 +996,6 @@ object Form1: TForm1
                 Top = 89
                 Width = 58
                 Caption = 'Digits:'
-                ParentColor = False
               end
               object edReadDigits: TSpinEdit
                 Left = 779
@@ -1046,7 +1024,6 @@ object Form1: TForm1
                 Top = 135
                 Width = 70
                 Caption = 'Format:'
-                ParentColor = False
               end
               object cbReadFormat: TComboBox
                 Left = 158
@@ -1074,7 +1051,6 @@ object Form1: TForm1
                 Top = 178
                 Width = 69
                 Caption = 'Option:'
-                ParentColor = False
               end
               object cbReadFormatOption: TComboBox
                 Left = 158
@@ -1093,7 +1069,6 @@ object Form1: TForm1
                 Top = 178
                 Width = 87
                 Caption = 'Interface:'
-                ParentColor = False
                 ParentShowHint = False
                 ShowHint = True
               end
@@ -1117,7 +1092,6 @@ object Form1: TForm1
                 Top = 224
                 Width = 73
                 Caption = 'Version:'
-                ParentColor = False
                 ParentShowHint = False
                 ShowHint = True
               end
@@ -1145,7 +1119,6 @@ object Form1: TForm1
                 Top = 224
                 Width = 91
                 Caption = 'Encoding:'
-                ParentColor = False
                 ParentShowHint = False
                 ShowHint = True
               end
@@ -1168,7 +1141,6 @@ object Form1: TForm1
                 Top = 270
                 Width = 76
                 Caption = 'Preview:'
-                ParentColor = False
               end
               object cbReadPreview: TEdit
                 Left = 158
@@ -1243,9 +1215,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 61
                 Caption = 'Name:'
-                Font.Color = clBlack
-                ParentColor = False
-                ParentFont = False
               end
               object cbWriteTplName: TComboBox
                 Left = 158
@@ -1307,9 +1276,6 @@ object Form1: TForm1
                 Top = 46
                 Width = 110
                 Caption = 'Description:'
-                Font.Color = clBlack
-                ParentColor = False
-                ParentFont = False
               end
               object edWriteTplDesc: TEdit
                 Left = 158
@@ -1317,8 +1283,6 @@ object Form1: TForm1
                 Top = 46
                 Width = 1659
                 Anchors = [akTop, akLeft, akRight]
-                Font.Color = clBlack
-                ParentFont = False
                 TabOrder = 4
               end
             end
@@ -1353,7 +1317,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 92
                 Caption = 'Pre-erase:'
-                ParentColor = False
               end
               object cbWriteTplPreErase: TCheckBox
                 Left = 158
@@ -1372,7 +1335,6 @@ object Form1: TForm1
                 Top = 46
                 Width = 118
                 Caption = 'Erase empty:'
-                ParentColor = False
               end
               object cbWriteTplEraseEmpty: TCheckBox
                 Left = 158
@@ -1391,7 +1353,6 @@ object Form1: TForm1
                 Top = 89
                 Width = 104
                 Caption = 'Fake-index:'
-                ParentColor = False
               end
               object cbWriteTplFakeIndex: TComboBox
                 Left = 158
@@ -1417,7 +1378,6 @@ object Form1: TForm1
                 Top = 135
                 Width = 123
                 Caption = 'Hard-sectors:'
-                ParentColor = False
                 ParentShowHint = False
               end
               object cbWriteTplHardSec: TCheckBox
@@ -1437,7 +1397,6 @@ object Form1: TForm1
                 Top = 178
                 Width = 89
                 Caption = 'No verify:'
-                ParentColor = False
               end
               object cbWriteTplNoVerify: TCheckBox
                 Left = 158
@@ -1456,7 +1415,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 67
                 Caption = 'Retries:'
-                ParentColor = False
               end
               object cbWriteTplRetries: TComboBox
                 Left = 779
@@ -1490,7 +1448,6 @@ object Form1: TForm1
                 Top = 46
                 Width = 87
                 Caption = 'Precomp:'
-                ParentColor = False
               end
               object cbWriteTplPrecomp: TComboBox
                 Left = 779
@@ -1515,7 +1472,6 @@ object Form1: TForm1
                 Top = 89
                 Width = 68
                 Caption = 'Densel:'
-                ParentColor = False
               end
               object cbWriteTplDensel: TComboBox
                 Left = 779
@@ -1541,7 +1497,6 @@ object Form1: TForm1
                 Top = 135
                 Width = 102
                 Caption = 'TP43 Pin 2:'
-                ParentColor = False
                 ParentShowHint = False
               end
               object cbWriteTplTplTP43Pin2: TCheckBox
@@ -1561,7 +1516,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 89
                 Caption = 'Cylinders:'
-                ParentColor = False
               end
               object cbWriteTplCyls: TComboBox
                 Left = 1312
@@ -1594,7 +1548,6 @@ object Form1: TForm1
                 Top = 46
                 Width = 63
                 Caption = 'Heads:'
-                ParentColor = False
               end
               object cbWriteTplHeads: TComboBox
                 Left = 1312
@@ -1619,7 +1572,6 @@ object Form1: TForm1
                 Top = 89
                 Width = 54
                 Caption = 'Steps:'
-                ParentColor = False
               end
               object cbWriteTplSteps: TComboBox
                 Left = 1312
@@ -1644,7 +1596,6 @@ object Form1: TForm1
                 Top = 135
                 Width = 69
                 Caption = 'HSwap:'
-                ParentColor = False
               end
               object cbWriteTplHSwap: TCheckBox
                 Left = 1312
@@ -1662,7 +1613,6 @@ object Form1: TForm1
                 Top = 178
                 Width = 59
                 Caption = 'Flippy:'
-                ParentColor = False
               end
               object cbWriteTplFlippy: TComboBox
                 Left = 1312
@@ -1686,7 +1636,6 @@ object Form1: TForm1
                 Top = 224
                 Width = 76
                 Caption = 'Reverse:'
-                ParentColor = False
               end
               object cbWriteTplFlippyReverse: TCheckBox
                 Left = 1312
@@ -1719,9 +1668,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 102
                 Caption = 'Source file:'
-                Font.Color = clBlack
-                ParentColor = False
-                ParentFont = False
               end
               object edWriteFileName: TFileNameEdit
                 Left = 158
@@ -1760,7 +1706,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 123
                 Caption = 'Format spec.:'
-                ParentColor = False
               end
               object cbWriteTplFormatSrc: TComboBox
                 Left = 158
@@ -1839,10 +1784,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 106
                 Caption = 'Source file:'
-                Font.Color = clBlack
-                Font.Name = 'Tahoma'
-                ParentColor = False
-                ParentFont = False
               end
               object edConvFileSource: TFileNameEdit
                 Left = 158
@@ -1909,7 +1850,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 127
                 Caption = 'Adjust-speed:'
-                ParentColor = False
               end
               object cbConvAdjustSpeed: TComboBox
                 Left = 158
@@ -1932,7 +1872,6 @@ object Form1: TForm1
                 Top = 46
                 Width = 37
                 Caption = 'PLL:'
-                ParentColor = False
               end
               object cbConvPLL: TComboBox
                 Left = 158
@@ -1978,7 +1917,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 167
                 Caption = 'Trackset (--tracks):'
-                ParentColor = False
               end
               object lblConvTracksetCyls: TLabel
                 Left = 588
@@ -1986,7 +1924,6 @@ object Form1: TForm1
                 Top = 46
                 Width = 89
                 Caption = 'Cylinders:'
-                ParentColor = False
               end
               object cbConvTracksetCyls: TComboBox
                 Left = 710
@@ -2019,7 +1956,6 @@ object Form1: TForm1
                 Top = 89
                 Width = 63
                 Caption = 'Heads:'
-                ParentColor = False
               end
               object cbConvTracksetHeads: TComboBox
                 Left = 710
@@ -2044,7 +1980,6 @@ object Form1: TForm1
                 Top = 135
                 Width = 54
                 Caption = 'Steps:'
-                ParentColor = False
               end
               object cbConvTracksetSteps: TComboBox
                 Left = 710
@@ -2069,7 +2004,6 @@ object Form1: TForm1
                 Top = 178
                 Width = 69
                 Caption = 'HSwap:'
-                ParentColor = False
               end
               object cbConvTracksetHSwap: TCheckBox
                 Left = 710
@@ -2087,7 +2021,6 @@ object Form1: TForm1
                 Top = 224
                 Width = 59
                 Caption = 'Flippy:'
-                ParentColor = False
               end
               object cbConvTracksetFlippy: TComboBox
                 Left = 710
@@ -2111,7 +2044,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 206
                 Caption = 'Trackset (--out-tracks):'
-                ParentColor = False
               end
               object lblConvOutTracksetCyls: TLabel
                 Left = 1155
@@ -2119,7 +2051,6 @@ object Form1: TForm1
                 Top = 46
                 Width = 89
                 Caption = 'Cylinders:'
-                ParentColor = False
               end
               object cbConvOutTracksetCyls: TComboBox
                 Left = 1312
@@ -2152,7 +2083,6 @@ object Form1: TForm1
                 Top = 89
                 Width = 63
                 Caption = 'Heads:'
-                ParentColor = False
               end
               object cbConvOutTracksetHeads: TComboBox
                 Left = 1312
@@ -2177,7 +2107,6 @@ object Form1: TForm1
                 Top = 135
                 Width = 54
                 Caption = 'Steps:'
-                ParentColor = False
               end
               object cbConvOutTracksetSteps: TComboBox
                 Left = 1312
@@ -2202,7 +2131,6 @@ object Form1: TForm1
                 Top = 178
                 Width = 69
                 Caption = 'HSwap:'
-                ParentColor = False
               end
               object cbConvOutTracksetHSwap: TCheckBox
                 Left = 1312
@@ -2220,7 +2148,6 @@ object Form1: TForm1
                 Top = 224
                 Width = 59
                 Caption = 'Flippy:'
-                ParentColor = False
               end
               object cbConvOutTracksetFlippy: TComboBox
                 Left = 1312
@@ -2244,7 +2171,6 @@ object Form1: TForm1
                 Top = 266
                 Width = 76
                 Caption = 'Reverse:'
-                ParentColor = False
               end
               object cbConvTplFlippyReverse: TCheckBox
                 Left = 1312
@@ -2277,7 +2203,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 123
                 Caption = 'Format spec.:'
-                ParentColor = False
               end
               object cbConvDiskdefs: TComboBox
                 Left = 158
@@ -2336,11 +2261,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 88
                 Caption = 'Directory:'
-                Font.Color = clBlack
-                Font.Height = -20
-                Font.Name = 'Tahoma'
-                ParentColor = False
-                ParentFont = False
               end
               object edConvDirDest: TDirectoryEdit
                 Left = 158
@@ -2375,7 +2295,6 @@ object Form1: TForm1
                 Top = 46
                 Width = 88
                 Caption = 'Filename:'
-                ParentColor = False
               end
               object edConvFilename: TEdit
                 Left = 158
@@ -2407,7 +2326,6 @@ object Form1: TForm1
                 Top = 89
                 Width = 80
                 Caption = 'Disk-Nr.:'
-                ParentColor = False
               end
               object cbConvDisk1: TSpinEdit
                 Left = 158
@@ -2447,7 +2365,6 @@ object Form1: TForm1
                 Top = 89
                 Width = 58
                 Caption = 'Digits:'
-                ParentColor = False
               end
               object cbConvDigits: TSpinEdit
                 Left = 710
@@ -2477,7 +2394,6 @@ object Form1: TForm1
                 Top = 135
                 Width = 70
                 Caption = 'Format:'
-                ParentColor = False
               end
               object cbConvFileFormat: TComboBox
                 Left = 158
@@ -2504,7 +2420,6 @@ object Form1: TForm1
                 Top = 178
                 Width = 69
                 Caption = 'Option:'
-                ParentColor = False
               end
               object cbConvFormatOption: TComboBox
                 Left = 158
@@ -2523,7 +2438,6 @@ object Form1: TForm1
                 Top = 178
                 Width = 87
                 Caption = 'Interface:'
-                ParentColor = False
                 ParentShowHint = False
                 ShowHint = True
               end
@@ -2547,7 +2461,6 @@ object Form1: TForm1
                 Top = 224
                 Width = 73
                 Caption = 'Version:'
-                ParentColor = False
                 ParentShowHint = False
                 ShowHint = True
               end
@@ -2575,7 +2488,6 @@ object Form1: TForm1
                 Top = 224
                 Width = 91
                 Caption = 'Encoding:'
-                ParentColor = False
                 ParentShowHint = False
                 ShowHint = True
               end
@@ -2598,7 +2510,6 @@ object Form1: TForm1
                 Top = 270
                 Width = 76
                 Caption = 'Preview:'
-                ParentColor = False
               end
               object edConvFilenamePreview: TEdit
                 Left = 158
@@ -2664,7 +2575,6 @@ object Form1: TForm1
             Top = 0
             Width = 89
             Caption = 'Cylinders:'
-            ParentColor = False
             ParentFont = False
           end
           object lblToolsEraseHeads: TLabel
@@ -2674,7 +2584,6 @@ object Form1: TForm1
             Width = 63
             Caption = 'Heads:'
             Enabled = False
-            ParentColor = False
             ParentFont = False
           end
           object lblToolsEraseFakeIndex: TLabel
@@ -2683,7 +2592,6 @@ object Form1: TForm1
             Top = 46
             Width = 105
             Caption = 'Fake-Index:'
-            ParentColor = False
             ParentFont = False
           end
           object lblToolsEraseSteps: TLabel
@@ -2693,7 +2601,6 @@ object Form1: TForm1
             Width = 54
             Caption = 'Steps:'
             Enabled = False
-            ParentColor = False
             ParentFont = False
           end
           object lblToolsEraseHSwap: TLabel
@@ -2703,7 +2610,6 @@ object Form1: TForm1
             Width = 69
             Caption = 'HSwap:'
             Enabled = False
-            ParentColor = False
             ParentFont = False
           end
           object lblToolsEraseFlippy: TLabel
@@ -2713,7 +2619,6 @@ object Form1: TForm1
             Width = 59
             Caption = 'Flippy:'
             Enabled = False
-            ParentColor = False
           end
           object cbToolsEraseCyl: TComboBox
             Left = 441
@@ -2721,7 +2626,6 @@ object Form1: TForm1
             Hint = 'which tracks to erase'
             Top = 0
             Width = 168
-            Font.Color = clBlack
             ItemHeight = 30
             ItemIndex = 0
             Items.Strings = (
@@ -2784,13 +2688,14 @@ object Form1: TForm1
             TabOrder = 8
             OnClick = lblToolsEraseHFreqClick
           end
-          object rbToolsErase: TRadioButton
+          object rbToolsErase: TCheckBox
             Left = 28
             Height = 34
             Top = 0
             Width = 77
             Caption = 'Erase'
             Checked = True
+            State = cbChecked
             TabOrder = 0
             TabStop = True
             OnClick = rbToolsEraseClick
@@ -2844,7 +2749,6 @@ object Form1: TForm1
             Top = 0
             Width = 47
             Caption = 'Revs:'
-            ParentColor = False
             ParentFont = False
           end
           object cbToolsEraseRevs: TComboBox
@@ -2890,13 +2794,8 @@ object Form1: TForm1
             Width = 88
             Caption = 'Cylinders:'
             Enabled = False
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentColor = False
-            ParentFont = False
           end
-          object rbToolsSeek: TRadioButton
+          object rbToolsSeek: TCheckBox
             Left = 28
             Height = 34
             Top = 0
@@ -2927,10 +2826,6 @@ object Form1: TForm1
             Width = 462
             Caption = 'Allow extreme cylinders with no prompt (--force)'
             Enabled = False
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentFont = False
             TabOrder = 2
             OnClick = cbToolsSeekTrackForceClick
           end
@@ -2942,10 +2837,6 @@ object Form1: TForm1
             Width = 430
             Caption = 'Seek with drive motor activated (--motor-on)'
             Enabled = False
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentFont = False
             TabOrder = 3
             OnClick = cbToolsSeekMotorOnClick
           end
@@ -2967,11 +2858,6 @@ object Form1: TForm1
             Width = 88
             Caption = 'Cylinders:'
             Enabled = False
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentColor = False
-            ParentFont = False
           end
           object lblToolsCleanLinger: TLabel
             Left = 677
@@ -2980,11 +2866,6 @@ object Form1: TForm1
             Width = 202
             Caption = 'Linger time/step (ms):'
             Enabled = False
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentColor = False
-            ParentFont = False
           end
           object lblToolsCleanPasses: TLabel
             Left = 243
@@ -2993,13 +2874,8 @@ object Form1: TForm1
             Width = 67
             Caption = 'Passes:'
             Enabled = False
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentColor = False
-            ParentFont = False
           end
-          object rbToolsClean: TRadioButton
+          object rbToolsClean: TCheckBox
             Left = 28
             Height = 34
             Top = 0
@@ -3085,13 +2961,8 @@ object Form1: TForm1
             Width = 93
             Caption = 'Iterations:'
             Enabled = False
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentColor = False
-            ParentFont = False
           end
-          object rbToolsRPM: TRadioButton
+          object rbToolsRPM: TCheckBox
             Left = 28
             Height = 34
             Top = 0
@@ -3107,9 +2978,6 @@ object Form1: TForm1
             Top = 0
             Width = 168
             Enabled = False
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
             MaxValue = 99
             ParentFont = False
             TabOrder = 1
@@ -3139,11 +3007,6 @@ object Form1: TForm1
             Top = 0
             Width = 132
             Caption = 'Select (usecs):'
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentColor = False
-            ParentFont = False
           end
           object lblSetDelayStep: TLabel
             Left = 245
@@ -3151,11 +3014,6 @@ object Form1: TForm1
             Top = 49
             Width = 118
             Caption = 'Step (usecs):'
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentColor = False
-            ParentFont = False
           end
           object lblSetDelayAutoOff: TLabel
             Left = 245
@@ -3163,11 +3021,6 @@ object Form1: TForm1
             Top = 98
             Width = 144
             Caption = 'Watchdog (ms):'
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentColor = False
-            ParentFont = False
           end
           object lblSetDelaySettle: TLabel
             Left = 648
@@ -3175,11 +3028,6 @@ object Form1: TForm1
             Top = 0
             Width = 153
             Caption = 'Settle time (ms):'
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentColor = False
-            ParentFont = False
           end
           object lblSetDelayMotor: TLabel
             Left = 648
@@ -3187,13 +3035,8 @@ object Form1: TForm1
             Top = 49
             Width = 106
             Caption = 'Motor (ms):'
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentColor = False
-            ParentFont = False
           end
-          object rbSetDelays: TRadioButton
+          object rbSetDelays: TCheckBox
             Left = 28
             Height = 34
             Top = 0
@@ -3201,6 +3044,7 @@ object Form1: TForm1
             Caption = 'Set delays'
             Checked = True
             TabOrder = 0
+            State = cbChecked
             TabStop = True
             OnClick = rbSetDelaysClick
           end
@@ -3210,12 +3054,8 @@ object Form1: TForm1
             Hint = 'Delay after drive select (usecs)'
             Top = 0
             Width = 168
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
             MaxValue = 999999
             MinValue = 1
-            ParentFont = False
             TabOrder = 1
             Value = 10
             OnChange = cbSetDelaySelectChange
@@ -3226,12 +3066,8 @@ object Form1: TForm1
             Hint = 'Delay between head steps (usecs)'
             Top = 49
             Width = 168
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
             MaxValue = 99999
             MinValue = 1
-            ParentFont = False
             TabOrder = 2
             Value = 5000
             OnChange = cbSetDelayStepChange
@@ -3242,12 +3078,8 @@ object Form1: TForm1
             Hint = 'Quiescent time until drives reset (msecs)'
             Top = 98
             Width = 168
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
             MaxValue = 999999
             MinValue = 1
-            ParentFont = False
             TabOrder = 3
             Value = 10000
             OnChange = cbSetDelayAutoOffChange
@@ -3258,12 +3090,8 @@ object Form1: TForm1
             Hint = 'Settle delay after seek (msecs)'
             Top = 0
             Width = 168
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
             MaxValue = 999
             MinValue = 1
-            ParentFont = False
             TabOrder = 5
             Value = 15
             OnChange = cbSetDelaySettleChange
@@ -3274,12 +3102,8 @@ object Form1: TForm1
             Hint = 'Delay after motor on (msecs)'
             Top = 49
             Width = 168
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
             MaxValue = 9999
             MinValue = 1
-            ParentFont = False
             TabOrder = 6
             Value = 750
             OnChange = cbSetDelayMotorChange
@@ -3310,11 +3134,6 @@ object Form1: TForm1
             Top = 147
             Width = 157
             Caption = 'Index-Mask (ms):'
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentColor = False
-            ParentFont = False
           end
           object cbSetDelayIndexMask: TSpinEdit
             Left = 427
@@ -3322,12 +3141,8 @@ object Form1: TForm1
             Hint = 'Index post-trigger mask time'''''''
             Top = 147
             Width = 168
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
             MaxValue = 999999
             MinValue = 1
-            ParentFont = False
             TabOrder = 4
             Value = 200
             OnChange = cbSetDelayIndexMaskChange
@@ -3338,11 +3153,6 @@ object Form1: TForm1
             Top = 98
             Width = 139
             Caption = 'Pre-Write (ms):'
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentColor = False
-            ParentFont = False
           end
           object lblSetDelayPostWrite: TLabel
             Left = 648
@@ -3350,11 +3160,6 @@ object Form1: TForm1
             Top = 147
             Width = 148
             Caption = 'Post-Write (ms):'
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentColor = False
-            ParentFont = False
           end
           object cbSetDelayPreWrite: TSpinEdit
             Left = 844
@@ -3362,12 +3167,8 @@ object Form1: TForm1
             Hint = 'Min. time from track change to write start'
             Top = 98
             Width = 168
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
             MaxValue = 9999
             MinValue = 1
-            ParentFont = False
             TabOrder = 7
             Value = 100
             OnChange = cbSetDelayPreWriteChange
@@ -3378,12 +3179,8 @@ object Form1: TForm1
             Hint = 'Min. time from write end to track change'
             Top = 147
             Width = 168
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
             MaxValue = 9999
             MinValue = 1
-            ParentFont = False
             TabOrder = 8
             Value = 1000
             OnChange = cbSetDelayPostWriteChange
@@ -3406,13 +3203,8 @@ object Form1: TForm1
             Width = 112
             Caption = 'PIN number:'
             Enabled = False
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentColor = False
-            ParentFont = False
           end
-          object rbSetGetPIN: TRadioButton
+          object rbSetGetPIN: TCheckBox
             Left = 28
             Height = 34
             Top = 0
@@ -3428,12 +3220,8 @@ object Form1: TForm1
             Top = 0
             Width = 168
             Enabled = False
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
             MaxValue = 32
             MinValue = 1
-            ParentFont = False
             TabOrder = 1
             Value = 2
             OnChange = cbSetPINNumberChange
@@ -3477,16 +3265,12 @@ object Form1: TForm1
               Width = 168
               DropDownCount = 4
               Enabled = False
-              Font.Color = clBlack
-              Font.Height = -20
-              Font.Name = 'Tahoma'
               ItemHeight = 24
               Items.Strings = (
                 ''
                 'High (5v)'
                 'Low (0v)'
               )
-              ParentFont = False
               TabOrder = 2
               OnChange = cbSetPINLevelChange
             end
@@ -3509,13 +3293,8 @@ object Form1: TForm1
             Width = 732
             Caption = 'Please read first the Greaseweazle-wiki! Jumper settings 4-pin header: GND-DCLK'
             Enabled = False
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentColor = False
-            ParentFont = False
           end
-          object rbSetFirmware: TRadioButton
+          object rbSetFirmware: TCheckBox
             Left = 28
             Height = 34
             Top = 0
@@ -3598,44 +3377,12 @@ object Form1: TForm1
             Width = 328
             Caption = 'Bootloader (Usually NOT needed)'
             Enabled = False
-            Font.Color = clBlack
-            Font.Height = -20
-            Font.Name = 'Tahoma'
-            ParentFont = False
             TabOrder = 2
             OnClick = cbSetFirmwareBootloaderClick
           end
         end
       end
     end
-  end
-  object SQLite3Connection1: TSQLite3Connection
-    Connected = False
-    LoginPrompt = False
-    KeepConnection = False
-    Transaction = SQLTransaction1
-    AlwaysUseBigint = False
-    Left = 1092
-  end
-  object SQLQueryDir: TSQLQuery
-    FieldDefs = <>
-    Database = SQLite3Connection1
-    Transaction = SQLTransaction1
-    Params = <>
-    Macros = <>
-    Left = 952
-  end
-  object DataSource1: TDataSource
-    DataSet = SQLQueryDir
-    Left = 1022
-  end
-  object NewDB: TOpenDialog
-    Left = 1218
-  end
-  object SQLTransaction1: TSQLTransaction
-    Active = False
-    Database = SQLite3Connection1
-    Left = 1162
   end
   object OpenDialog1: TOpenDialog
     Left = 882
