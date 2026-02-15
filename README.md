@@ -1,9 +1,9 @@
 -----------------------------------------------------------------
 
-FluxMyFluffyFloppy v5.2.7 - 2026-01-13
+FluxMyFluffyFloppy v5.2.7.1 - 2026-02-15
 -
 
-A Microsoft(r) Windows(r) GUI for the "Greaseweazle Host Tools"
+A Microsoft(r) Windows(r) and Linux GUI for the "Greaseweazle Host Tools"
 
 FREEWARE / OpenSource
 
@@ -16,7 +16,7 @@ Web: https://github.com/FrankieTheFluff/FluxMyFluffyFloppy
 Mail: fluxmyfluffyfloppy@mail.de
 
 Requirements:
-- Microsoft(r)Windows(r)
+- Microsoft(r)Windows(r) or Linux Operating System (Developed on Debian/Ubuntu)
 - Greaseweazle Host Tools
 - Greaseweazle 'diskdefs.cfg' files optional
 
