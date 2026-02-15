@@ -119,7 +119,6 @@ object Form1: TForm1
         Top = 0
         Width = 62
         Caption = 'Location:'
-        ParentColor = False
       end
       object lblGWDevice: TLabel
         Left = 19
@@ -127,7 +126,6 @@ object Form1: TForm1
         Top = 44
         Width = 91
         Caption = 'Device/COM:'
-        ParentColor = False
       end
       object cbGWDevCOM: TComboBox
         Left = 152
@@ -147,7 +145,6 @@ object Form1: TForm1
         Top = 45
         Width = 40
         Caption = 'Drive:'
-        ParentColor = False
       end
       object cbGWDrive: TComboBox
         Left = 440
@@ -232,7 +229,6 @@ object Form1: TForm1
         Width = 71
         Anchors = []
         Caption = 'Hardware:'
-        ParentColor = False
       end
       object cbGWHW: TComboBox
         Left = 656
@@ -337,7 +333,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 45
                 Caption = 'Name:'
-                ParentColor = False
               end
               object cbReadTplName: TComboBox
                 Left = 141
@@ -356,7 +351,6 @@ object Form1: TForm1
                 Top = 41
                 Width = 82
                 Caption = 'Description:'
-                ParentColor = False
               end
               object edReadTplDesc: TEdit
                 Left = 141
@@ -439,7 +433,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 36
                 Caption = 'Revs:'
-                ParentColor = False
               end
               object cbReadTplRevs: TComboBox
                 Left = 141
@@ -473,7 +466,7 @@ object Form1: TForm1
                 Top = 41
                 Width = 33
                 Caption = 'Raw:'
-                ParentColor = False
+                 
               end
               object cbReadTplRaw: TCheckBox
                 Left = 141
@@ -492,7 +485,6 @@ object Form1: TForm1
                 Top = 80
                 Width = 77
                 Caption = 'Fake-Index:'
-                ParentColor = False
               end
               object cbReadTplFakeIndex: TComboBox
                 Left = 141
@@ -518,7 +510,6 @@ object Form1: TForm1
                 Top = 120
                 Width = 92
                 Caption = 'Hard-sectors:'
-                ParentColor = False
               end
               object cbReadTplHardSec: TCheckBox
                 Left = 141
@@ -537,7 +528,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 96
                 Caption = 'Adjust-Speed:'
-                ParentColor = False
               end
               object cbReadTplAdjustSpeed: TComboBox
                 Left = 496
@@ -563,7 +553,6 @@ object Form1: TForm1
                 Top = 41
                 Width = 51
                 Caption = 'Retries:'
-                ParentColor = False
               end
               object cbReadTplRetries: TComboBox
                 Left = 496
@@ -598,7 +587,6 @@ object Form1: TForm1
                 Top = 80
                 Width = 90
                 Caption = 'Seek-Retries:'
-                ParentColor = False
               end
               object cbReadTplSeekRetries: TComboBox
                 Left = 496
@@ -632,7 +620,6 @@ object Form1: TForm1
                 Top = 120
                 Width = 28
                 Caption = 'PLL:'
-                ParentColor = False
               end
               object cbReadTplPLL: TComboBox
                 Left = 496
@@ -657,7 +644,6 @@ object Form1: TForm1
                 Top = 159
                 Width = 50
                 Caption = 'Densel:'
-                ParentColor = False
               end
               object cbReadTplDD: TComboBox
                 Left = 496
@@ -683,7 +669,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 68
                 Caption = 'Cylinders:'
-                ParentColor = False
               end
               object cbReadTplCyls: TComboBox
                 Left = 976
@@ -714,7 +699,6 @@ object Form1: TForm1
                 Top = 40
                 Width = 46
                 Caption = 'Heads:'
-                ParentColor = False
               end
               object cbReadTplHeads: TComboBox
                 Left = 976
@@ -739,7 +723,6 @@ object Form1: TForm1
                 Top = 80
                 Width = 40
                 Caption = 'Steps:'
-                ParentColor = False
               end
               object cbReadTplSteps: TComboBox
                 Left = 976
@@ -766,7 +749,6 @@ object Form1: TForm1
                 Top = 120
                 Width = 52
                 Caption = 'HSwap:'
-                ParentColor = False
               end
               object cbReadTplHSwap: TCheckBox
                 Left = 832
@@ -784,7 +766,6 @@ object Form1: TForm1
                 Top = 159
                 Width = 45
                 Caption = 'Flippy:'
-                ParentColor = False
               end
               object cbReadTplFlippy: TComboBox
                 Left = 976
@@ -807,7 +788,6 @@ object Form1: TForm1
                 Top = 199
                 Width = 58
                 Caption = 'Reverse:'
-                ParentColor = False
               end
               object cbReadTplFlippyReverse: TCheckBox
                 Left = 976
@@ -840,7 +820,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 91
                 Caption = 'Format spec.:'
-                ParentColor = False
               end
               object cbReadTplFormatSrc: TComboBox
                 Left = 141
@@ -899,7 +878,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 67
                 Caption = 'Directory:'
-                ParentColor = False
               end
               object edReadDirDest: TDirectoryEdit
                 Left = 141
@@ -933,7 +911,6 @@ object Form1: TForm1
                 Top = 41
                 Width = 66
                 Caption = 'Filename:'
-                ParentColor = False
               end
               object EdReadFilename: TEdit
                 Left = 141
@@ -965,7 +942,6 @@ object Form1: TForm1
                 Top = 80
                 Width = 60
                 Caption = 'Disk-Nr.:'
-                ParentColor = False
               end
               object edReadDisk1: TSpinEdit
                 Left = 141
@@ -1004,7 +980,6 @@ object Form1: TForm1
                 Top = 80
                 Width = 43
                 Caption = 'Digits:'
-                ParentColor = False
               end
               object edReadDigits: TSpinEdit
                 Left = 695
@@ -1033,7 +1008,6 @@ object Form1: TForm1
                 Top = 120
                 Width = 53
                 Caption = 'Format:'
-                ParentColor = False
               end
               object cbReadFormat: TComboBox
                 Left = 141
@@ -1061,7 +1035,6 @@ object Form1: TForm1
                 Top = 159
                 Width = 51
                 Caption = 'Option:'
-                ParentColor = False
               end
               object cbReadFormatOption: TComboBox
                 Left = 141
@@ -1080,7 +1053,6 @@ object Form1: TForm1
                 Top = 159
                 Width = 63
                 Caption = 'Interface:'
-                ParentColor = False
                 ParentShowHint = False
                 ShowHint = True
               end
@@ -1104,7 +1076,6 @@ object Form1: TForm1
                 Top = 200
                 Width = 55
                 Caption = 'Version:'
-                ParentColor = False
                 ParentShowHint = False
                 ShowHint = True
               end
@@ -1132,7 +1103,6 @@ object Form1: TForm1
                 Top = 200
                 Width = 67
                 Caption = 'Encoding:'
-                ParentColor = False
                 ParentShowHint = False
                 ShowHint = True
               end
@@ -1155,7 +1125,6 @@ object Form1: TForm1
                 Top = 241
                 Width = 58
                 Caption = 'Preview:'
-                ParentColor = False
               end
               object cbReadPreview: TEdit
                 Left = 141
@@ -1230,7 +1199,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 45
                 Caption = 'Name:'
-                ParentColor = False
               end
               object cbWriteTplName: TComboBox
                 Left = 141
@@ -1331,7 +1299,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 69
                 Caption = 'Pre-erase:'
-                ParentColor = False
               end
               object cbWriteTplPreErase: TCheckBox
                 Left = 141
@@ -1350,7 +1317,6 @@ object Form1: TForm1
                 Top = 41
                 Width = 88
                 Caption = 'Erase empty:'
-                ParentColor = False
               end
               object cbWriteTplEraseEmpty: TCheckBox
                 Left = 141
@@ -1369,7 +1335,6 @@ object Form1: TForm1
                 Top = 80
                 Width = 77
                 Caption = 'Fake-index:'
-                ParentColor = False
               end
               object cbWriteTplFakeIndex: TComboBox
                 Left = 141
@@ -1395,7 +1360,6 @@ object Form1: TForm1
                 Top = 120
                 Width = 92
                 Caption = 'Hard-sectors:'
-                ParentColor = False
                 ParentShowHint = False
               end
               object cbWriteTplHardSec: TCheckBox
@@ -1415,7 +1379,6 @@ object Form1: TForm1
                 Top = 159
                 Width = 67
                 Caption = 'No verify:'
-                ParentColor = False
               end
               object cbWriteTplNoVerify: TCheckBox
                 Left = 141
@@ -1434,7 +1397,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 51
                 Caption = 'Retries:'
-                ParentColor = False
               end
               object cbWriteTplRetries: TComboBox
                 Left = 510
@@ -1468,7 +1430,6 @@ object Form1: TForm1
                 Top = 41
                 Width = 65
                 Caption = 'Precomp:'
-                ParentColor = False
               end
               object cbWriteTplPrecomp: TComboBox
                 Left = 510
@@ -1493,7 +1454,6 @@ object Form1: TForm1
                 Top = 80
                 Width = 50
                 Caption = 'Densel:'
-                ParentColor = False
               end
               object cbWriteTplDensel: TComboBox
                 Left = 511
@@ -1519,7 +1479,6 @@ object Form1: TForm1
                 Top = 120
                 Width = 77
                 Caption = 'TP43 Pin 2:'
-                ParentColor = False
                 ParentShowHint = False
               end
               object cbWriteTplTplTP43Pin2: TCheckBox
@@ -1539,7 +1498,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 68
                 Caption = 'Cylinders:'
-                ParentColor = False
               end
               object cbWriteTplCyls: TComboBox
                 Left = 920
@@ -1572,7 +1530,6 @@ object Form1: TForm1
                 Top = 41
                 Width = 46
                 Caption = 'Heads:'
-                ParentColor = False
               end
               object cbWriteTplHeads: TComboBox
                 Left = 920
@@ -1597,7 +1554,6 @@ object Form1: TForm1
                 Top = 80
                 Width = 40
                 Caption = 'Steps:'
-                ParentColor = False
               end
               object cbWriteTplSteps: TComboBox
                 Left = 920
@@ -1622,7 +1578,6 @@ object Form1: TForm1
                 Top = 120
                 Width = 52
                 Caption = 'HSwap:'
-                ParentColor = False
               end
               object cbWriteTplHSwap: TCheckBox
                 Left = 920
@@ -1640,7 +1595,6 @@ object Form1: TForm1
                 Top = 159
                 Width = 45
                 Caption = 'Flippy:'
-                ParentColor = False
               end
               object cbWriteTplFlippy: TComboBox
                 Left = 921
@@ -1664,7 +1618,6 @@ object Form1: TForm1
                 Top = 200
                 Width = 58
                 Caption = 'Reverse:'
-                ParentColor = False
               end
               object cbWriteTplFlippyReverse: TCheckBox
                 Left = 920
@@ -1735,7 +1688,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 91
                 Caption = 'Format spec.:'
-                ParentColor = False
               end
               object cbWriteTplFormatSrc: TComboBox
                 Left = 141
@@ -1880,7 +1832,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 94
                 Caption = 'Adjust-speed:'
-                ParentColor = False
               end
               object cbConvAdjustSpeed: TComboBox
                 Left = 141
@@ -1903,7 +1854,6 @@ object Form1: TForm1
                 Top = 41
                 Width = 28
                 Caption = 'PLL:'
-                ParentColor = False
               end
               object cbConvPLL: TComboBox
                 Left = 141
@@ -1949,7 +1899,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 126
                 Caption = 'Trackset (--tracks):'
-                ParentColor = False
               end
               object lblConvTracksetCyls: TLabel
                 Left = 448
@@ -1957,7 +1906,6 @@ object Form1: TForm1
                 Top = 40
                 Width = 68
                 Caption = 'Cylinders:'
-                ParentColor = False
               end
               object cbConvTracksetCyls: TComboBox
                 Left = 560
@@ -1990,7 +1938,6 @@ object Form1: TForm1
                 Top = 80
                 Width = 46
                 Caption = 'Heads:'
-                ParentColor = False
               end
               object cbConvTracksetHeads: TComboBox
                 Left = 560
@@ -2015,7 +1962,6 @@ object Form1: TForm1
                 Top = 120
                 Width = 40
                 Caption = 'Steps:'
-                ParentColor = False
               end
               object cbConvTracksetSteps: TComboBox
                 Left = 560
@@ -2040,7 +1986,6 @@ object Form1: TForm1
                 Top = 160
                 Width = 52
                 Caption = 'HSwap:'
-                ParentColor = False
               end
               object cbConvTracksetHSwap: TCheckBox
                 Left = 560
@@ -2058,7 +2003,6 @@ object Form1: TForm1
                 Top = 200
                 Width = 45
                 Caption = 'Flippy:'
-                ParentColor = False
               end
               object cbConvTracksetFlippy: TComboBox
                 Left = 560
@@ -2082,7 +2026,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 155
                 Caption = 'Trackset (--out-tracks):'
-                ParentColor = False
               end
               object lblConvOutTracksetCyls: TLabel
                 Left = 824
@@ -2090,7 +2033,6 @@ object Form1: TForm1
                 Top = 41
                 Width = 68
                 Caption = 'Cylinders:'
-                ParentColor = False
               end
               object cbConvOutTracksetCyls: TComboBox
                 Left = 944
@@ -2123,7 +2065,6 @@ object Form1: TForm1
                 Top = 80
                 Width = 46
                 Caption = 'Heads:'
-                ParentColor = False
               end
               object cbConvOutTracksetHeads: TComboBox
                 Left = 944
@@ -2148,7 +2089,6 @@ object Form1: TForm1
                 Top = 120
                 Width = 40
                 Caption = 'Steps:'
-                ParentColor = False
               end
               object cbConvOutTracksetSteps: TComboBox
                 Left = 944
@@ -2173,7 +2113,6 @@ object Form1: TForm1
                 Top = 159
                 Width = 52
                 Caption = 'HSwap:'
-                ParentColor = False
               end
               object cbConvOutTracksetHSwap: TCheckBox
                 Left = 944
@@ -2191,7 +2130,6 @@ object Form1: TForm1
                 Top = 200
                 Width = 45
                 Caption = 'Flippy:'
-                ParentColor = False
               end
               object cbConvOutTracksetFlippy: TComboBox
                 Left = 944
@@ -2215,7 +2153,6 @@ object Form1: TForm1
                 Top = 239
                 Width = 58
                 Caption = 'Reverse:'
-                ParentColor = False
               end
               object cbConvTplFlippyReverse: TCheckBox
                 Left = 944
@@ -2248,7 +2185,6 @@ object Form1: TForm1
                 Top = 0
                 Width = 91
                 Caption = 'Format spec.:'
-                ParentColor = False
               end
               object cbConvDiskdefs: TComboBox
                 Left = 141
@@ -2341,7 +2277,6 @@ object Form1: TForm1
                 Top = 41
                 Width = 66
                 Caption = 'Filename:'
-                ParentColor = False
               end
               object edConvFilename: TEdit
                 Left = 141
@@ -2373,7 +2308,6 @@ object Form1: TForm1
                 Top = 80
                 Width = 60
                 Caption = 'Disk-Nr.:'
-                ParentColor = False
               end
               object cbConvDisk1: TSpinEdit
                 Left = 141
@@ -2413,7 +2347,6 @@ object Form1: TForm1
                 Top = 80
                 Width = 43
                 Caption = 'Digits:'
-                ParentColor = False
               end
               object cbConvDigits: TSpinEdit
                 Left = 634
@@ -2443,7 +2376,6 @@ object Form1: TForm1
                 Top = 120
                 Width = 53
                 Caption = 'Format:'
-                ParentColor = False
               end
               object cbConvFileFormat: TComboBox
                 Left = 141
@@ -2470,7 +2402,6 @@ object Form1: TForm1
                 Top = 159
                 Width = 51
                 Caption = 'Option:'
-                ParentColor = False
               end
               object cbConvFormatOption: TComboBox
                 Left = 141
@@ -2489,7 +2420,6 @@ object Form1: TForm1
                 Top = 159
                 Width = 63
                 Caption = 'Interface:'
-                ParentColor = False
                 ParentShowHint = False
                 ShowHint = True
               end
@@ -2513,7 +2443,6 @@ object Form1: TForm1
                 Top = 200
                 Width = 55
                 Caption = 'Version:'
-                ParentColor = False
                 ParentShowHint = False
                 ShowHint = True
               end
@@ -2541,7 +2470,6 @@ object Form1: TForm1
                 Top = 200
                 Width = 67
                 Caption = 'Encoding:'
-                ParentColor = False
                 ParentShowHint = False
                 ShowHint = True
               end
@@ -2564,7 +2492,6 @@ object Form1: TForm1
                 Top = 241
                 Width = 58
                 Caption = 'Preview:'
-                ParentColor = False
               end
               object edConvFilenamePreview: TEdit
                 Left = 141
@@ -2630,8 +2557,6 @@ object Form1: TForm1
             Top = 0
             Width = 63
             Caption = 'Cylinders:'
-            ParentColor = False
-            ParentFont = False
           end
           object lblToolsEraseHeads: TLabel
             Left = 218
@@ -2640,8 +2565,6 @@ object Form1: TForm1
             Width = 45
             Caption = 'Heads:'
             Enabled = False
-            ParentColor = False
-            ParentFont = False
           end
           object lblToolsEraseFakeIndex: TLabel
             Left = 605
@@ -2649,8 +2572,6 @@ object Form1: TForm1
             Top = 41
             Width = 74
             Caption = 'Fake-Index:'
-            ParentColor = False
-            ParentFont = False
           end
           object lblToolsEraseSteps: TLabel
             Left = 218
@@ -2659,8 +2580,6 @@ object Form1: TForm1
             Width = 39
             Caption = 'Steps:'
             Enabled = False
-            ParentColor = False
-            ParentFont = False
           end
           object lblToolsEraseHSwap: TLabel
             Left = 218
@@ -2669,8 +2588,6 @@ object Form1: TForm1
             Width = 50
             Caption = 'HSwap:'
             Enabled = False
-            ParentColor = False
-            ParentFont = False
           end
           object lblToolsEraseFlippy: TLabel
             Left = 218
@@ -2679,7 +2596,6 @@ object Form1: TForm1
             Width = 45
             Caption = 'Flippy:'
             Enabled = False
-            ParentColor = False
           end
           object cbToolsEraseCyl: TComboBox
             Left = 394
@@ -2809,8 +2725,6 @@ object Form1: TForm1
             Top = 0
             Width = 33
             Caption = 'Revs:'
-            ParentColor = False
-            ParentFont = False
           end
           object cbToolsEraseRevs: TComboBox
             Left = 800
