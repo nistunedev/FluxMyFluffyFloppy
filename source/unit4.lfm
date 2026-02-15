@@ -6,7 +6,7 @@ object frmGW: TfrmGW
   Caption = 'Greaseweazle'
   ClientHeight = 833
   ClientWidth = 1482
-  DesignTimePPI = 168
+  DesignTimePPI = 96
   Position = poMainFormCenter
   LCLVersion = '4.4.0.0'
   OnClose = FormClose
