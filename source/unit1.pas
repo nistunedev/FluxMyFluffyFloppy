@@ -50,8 +50,8 @@ const
   GW_PROP_PAGE_SETTINGS = 4;
 
   APP_NAME = 'FluxMyFluffyFloppy ';
-  APP_VERSION = 'v5.2.7';
-  APP_DATE = '2026-01-13';
+  APP_VERSION = 'v5.2.7.1';
+  APP_DATE = '2026-02-15';
 
   {$IFDEF WINDOWS}
     GW_EXECUTABLE = 'greaseweazle\gw.exe';
